@@ -22,6 +22,8 @@ OUT = os.path.join(os.path.dirname(__file__), "camellia.shared")
 GCC = os.environ.get('CC', 'gcc')
 CMD = "%s %s -shared -fPIC -O3 -o%s" % (GCC, IN, OUT)
 
+class camelliaException(Exception):
+    pass
 
 if not os.path.exists(OUT):
     print("Compiling camellia with %s..." % GCC)
@@ -35,6 +37,7 @@ try:
     camlib = CDLL(ADD+OUT)
 except:
     print ("Please install gcc and include camellia.c with this file, then run with sudo to compile!")
+    raise camelliaException("camellia.shared not found. Please install gcc and include camellia.c with this file, then run with sudo to compile!")
 
 
 def Camellia_Ekeygen(rawKey):
