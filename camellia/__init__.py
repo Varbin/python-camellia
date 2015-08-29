@@ -33,7 +33,7 @@ d['Pocket PC'] = '.dll'
 def version_string():
     plat = sys.platform.replace('linux2','linux').replace('linux3', 'linux')
     
-    base = "camellia-{}-{}-{}"+d[plat]
+    base = "camellia-{}-{}-{}"+d.get(plat, '.???')
 
     proc = platform.machine() if platform.machine else "unknown"
     arch = platform.architecture()[1]
