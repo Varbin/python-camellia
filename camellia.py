@@ -26,7 +26,10 @@ CMD = "%s %s -shared -fPIC -O3 -o%s" % (GCC, IN, OUT)
 if not os.path.exists(OUT):
     print("Compiling camellia with %s..." % GCC)
     print(CMD)
-    assert not os.system(CMD)
+    try:
+        os.system(CMD)
+    except AssertionError:
+        print ("Please install gcc and include camellia.c with this file, then run with sudo to compile!")
 
 try:
     camlib = CDLL(ADD+OUT)
