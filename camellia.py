@@ -27,7 +27,7 @@ if not os.path.exists(OUT):
     print("Compiling camellia with %s..." % GCC)
     print(CMD)
     try:
-        os.system(CMD)
+        assert not os.system(CMD)
     except AssertionError:
         print ("Please install gcc and include camellia.c with this file, then run with sudo to compile!")
 
