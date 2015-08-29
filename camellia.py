@@ -13,11 +13,37 @@ MODE_CFB = 3
 MODE_OFB = 5
 MODE_CTR = 6
 
+import os
+import sys
+import platform
+
+d = dict(
+    linux='.so',
+    freebsd='.so',
+    openbsd='.so',
+    unix='.so', #???
+    darwin='.so',
+    win32='.dll',
+    cygwin='.dll',
+    java='.???',
+)
+
+d['Pocket PC'] = '.dll'
+
+def version_string():
+    plat = sys.platform.replace('linux2','linux').replace('linux3', 'linux')
+    
+    base = "camellia-{}-{}-{}"+d[plat]
+
+    proc = platform.machine() if platform.machine else "unknown"
+    arch = platform.architecture()[1]
+
+    return base.format(plat, proc, arch)
 
 ADD = "./" if not os.path.dirname(__file__) else ""
 
 IN = os.path.join(os.path.dirname(__file__), "camellia.c")
-OUT = os.path.join(os.path.dirname(__file__), "camellia.shared")
+OUT = os.path.join(os.path.dirname(__file__), version_string())
 
 GCC = os.environ.get('CC', 'gcc')
 CMD = "%s %s -shared -fPIC -O3 -o%s" % (GCC, IN, OUT)
