@@ -32,6 +32,22 @@ setup(
         'camellia':['*.dll', '*.c'],
     },
     license = "MIT",
+    classifiers = [
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy',
+        'Topic :: Security',
+        'Topic :: Security :: Cryptography',
+    ],
+    keywords = [
+        'camellia', 'encryption', 'decryption', 'cipher',
+    ],
+    platforms = ['all', 'gcc'],
     
     #include_package_data=True,
 )
