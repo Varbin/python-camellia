@@ -125,7 +125,7 @@ class CamelliaCipher(object):
         if "IV" in keys:
             self.__IV = kwargs["IV"]
             if len(self.__IV) != self.block_size/8:
-                raise ValueError("IV must be 8 bytes long")
+                raise ValueError("IV must be 16 bytes long")
 
         if "counter" in keys:
             self.__counter = kwargs["counter"]
