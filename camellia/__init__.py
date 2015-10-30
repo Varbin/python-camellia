@@ -5,6 +5,9 @@ import os
 import sys
 import platform
 
+import camellia.engines.reference as c_reference
+import camellia.engines.mini as c_mini
+
 MODE_ECB = 1
 MODE_CBC = 2
 MODE_CFB = 3
@@ -16,11 +19,11 @@ d = dict(
     linux='.so',
     freebsd='.so',
     openbsd='.so',
+    netbsd='.so',
     unix='.so',  # ???
     darwin='.so',
     win32='.dll',
     cygwin='.dll',
-    java='.???',
 )
 
 d['Pocket PC'] = '.dll'
@@ -34,16 +37,18 @@ except NameError:
 class camelliaException(Exception):
     pass
 
+__version__ = "0.2"
+
 
 def version_string():
     plat = sys.platform.replace('linux2', 'linux').replace('linux3', 'linux')
 
-    base = "camellia-{}-{}-{}"+d.get(plat, '.???')
+    base = "camellia-{}-{}-{}"+d.get(plat, '.shared')
 
     proc = platform.machine() if platform.machine else "unknown"
     arch = platform.architecture()[1]
 
-    return base.format(plat, proc, arch)
+    return base.format(__version__, plat, proc)
 
 
 ADD = "./" if not os.path.dirname(__file__) else ""
@@ -51,11 +56,11 @@ ADD = "./" if not os.path.dirname(__file__) else ""
 IN = os.path.join(os.path.dirname(__file__), "camellia.c")
 OUT = os.path.join(os.path.dirname(__file__), version_string())
 
-GCC = os.environ.get('CC', 'gcc')
+GCC = os.environ.get('CC', 'cc')
 CMD = "%s %s -shared -fPIC -O3 -o%s" % (GCC, IN, OUT)
 
 
-if not os.path.exists(OUT):
+if not os.path.exists(OUT) and sys.platform != "win32":  # win32 is precompiled
     print("Compiling camellia with %s..." % GCC)
     print(CMD)
     try:
@@ -75,34 +80,43 @@ except:
                             "with sudo to compile!")
 
 
-def Camellia_Ekeygen(rawKey):
-    assert (len(rawKey) * 8) in [128, 192, 256]
+##def Camellia_Ekeygen(rawKey):
+##    assert (len(rawKey) * 8) in [128, 192, 256]
+##
+##    keytable = create_string_buffer(272)  # create buffer to write in
+##    camlib.Camellia_Ekeygen(len(rawKey)*8, rawKey, keytable)
+##
+##    return keytable.raw  # return as bytes
+##
+##
+##def Camellia_Encrypt(keyLength, keytable, plainText):
+##    assert keyLength in [128, 192, 256]
+##    assert len(plainText) == 16
+##
+##    cipher = create_string_buffer(16)
+##    camlib.Camellia_Encrypt(keyLength, plainText, keytable, cipher)
+##
+##    return cipher.raw
+##
+##
+##def Camellia_Decrypt(keyLength, keytable, cipherText):
+##    assert keyLength in [128, 192, 256]
+##    assert len(cipherText) == 16
+##
+##    clear = create_string_buffer(16)
+##    camlib.Camellia_Decrypt(keyLength, cipherText, keytable, clear)
+##
+##    return clear.raw
 
-    keytable = create_string_buffer(272)  # create buffer to write in
-    camlib.Camellia_Ekeygen(len(rawKey)*8, rawKey, keytable)
 
-    return keytable.raw  # return as bytes
+if sys.platform == "win32":
+    crypto_engine = c_reference.Engine(camlib)
+else:
+    crypto_engine = c_mini.Engine(camlib)
 
-
-def Camellia_Encrypt(keyLength, keytable, plainText):
-    assert keyLength in [128, 192, 256]
-    assert len(plainText) == 16
-
-    cipher = create_string_buffer(16)
-    camlib.Camellia_Encrypt(keyLength, plainText, keytable, cipher)
-
-    return cipher.raw
-
-
-def Camellia_Decrypt(keyLength, keytable, cipherText):
-    assert keyLength in [128, 192, 256]
-    assert len(cipherText) == 16
-
-    clear = create_string_buffer(16)
-    camlib.Camellia_Decrypt(keyLength, cipherText, keytable, clear)
-
-    return clear.raw
-
+Camellia_Ekeygen = crypto_engine.Camellia_Ekeygen
+Camellia_Encrypt = crypto_engine.Camellia_Encrypt
+Camellia_Decrypt = crypto_engine.Camellia_Decrypt
 
 class CamelliaCipher(object):
     block_size = 16*8
@@ -216,7 +230,7 @@ def xor(a, b):
     return bytes([c ^ d for c, d in zip(a, b)])
 
 
-def test():
+def test(v=True):
     key = b"80000000000000000000000000000000"
     plain = b"00000000000000000000000000000000"
     cipher = b"6C227F749319A3AA7DA235A9BBA05A2C"
@@ -229,19 +243,27 @@ def test():
     try:
         assert ec == binascii.unhexlify(cipher)
     except AssertionError:
-        print("Result:\t\tcipher=%s" % binascii.hexlify(ec).decode())
-        print("Required:\tcipher=%s" % cipher.decode())
-        return "failed"
+        if v:
+            print("Result:\t\tcipher=%s" % binascii.hexlify(ec).decode())
+            print("Required:\tcipher=%s" % cipher.decode())
+            return "failed"
+        else:
+            raise
 
     dc = c.decrypt(ec)
     try:
         assert dc == binascii.unhexlify(plain)
     except AssertionError:
-        print("Result:\t\tcipher=%s" % binascii.hexlify(dc).decode())
-        print("Required:\tcipher=%s" % plain.decode())
-        return "failed"
+        if v:
+            print("Result:\t\tcipher=%s" % binascii.hexlify(dc).decode())
+            print("Required:\tcipher=%s" % plain.decode())
+            return "failed"
+        else:
+            raise
 
     return "passed"
+
+test(0)  # Selftest
 
 if __name__ == "__main__":
     print("Test: "+test())
