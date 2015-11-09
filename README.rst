@@ -73,7 +73,7 @@ Licenses
     THE SOFTWARE.
 
 
-This software uses the official camellia c reference implementation.
+This software uses the official camellia c mini engines.
 
 .. code::
 
