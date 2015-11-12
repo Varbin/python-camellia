@@ -142,6 +142,9 @@ Camellia_Decrypt = crypto_engine.Camellia_Decrypt
 def new(*args, **kwargs):
     return CamelliaCipher(*args, **kwargs)
 
+key_size = (16, 24, 32)
+block_size = 16
+
 class CamelliaCipher(object):
     block_size = 16*8
 
