@@ -5,8 +5,9 @@ import os
 import sys
 import platform
 
-from .engines import reference as c_reference
-from .engines import mini as c_mini
+#from .engines import reference as c_reference
+#from .engines import mini as c_mini
+from .engines.classic import used as c_used
 
 MODE_ECB = 1
 MODE_CBC = 2
@@ -130,10 +131,11 @@ except:
 ##    return clear.raw
 
 
-if sys.platform == "win32":
-    crypto_engine = c_reference.Engine(camlib)
-else:
-    crypto_engine = c_mini.Engine(camlib)
+#if sys.platform == "win32":
+#    crypto_engine = c_reference.Engine(camlib)
+#else:
+#    crypto_engine = c_mini.Engine(camlib)
+crypto_engine = c_used.Engine(camlib)
 
 Camellia_Ekeygen = crypto_engine.Camellia_Ekeygen
 Camellia_Encrypt = crypto_engine.Camellia_Encrypt
@@ -244,9 +246,9 @@ class CamelliaCipher(object):
 
     def _block(self, s):
         l = []
-        rest_size = int(len(s) % (self.block_size/8))
-        for i in range(int(len(s)/(self.block_size/8))):
-            l.append(s[i*(self.block_size//8):((i+1)*(self.block_size//8))])
+        rest_size = int(len(s) % (self.block_size))
+        for i in range(int(len(s)/(self.block_size))):
+            l.append(s[i*(self.block_size):((i+1)*(self.block_size))])
         if rest_size:
             # raise ValueError()
             l.append(s[-rest_size:])
@@ -269,6 +271,7 @@ def test(v=True):
     c = CamelliaCipher(binascii.unhexlify(key))
 
     ec = c.encrypt(binascii.unhexlify(plain))
+    
     try:
         assert ec == binascii.unhexlify(cipher)
     except AssertionError:
