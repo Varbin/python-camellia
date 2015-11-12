@@ -5,8 +5,8 @@ import os
 import sys
 import platform
 
-import camellia.engines.reference as c_reference
-import camellia.engines.mini as c_mini
+from .engines import reference as c_reference
+from .engines import mini as c_mini
 
 MODE_ECB = 1
 MODE_CBC = 2
@@ -56,18 +56,39 @@ ADD = "./" if not os.path.dirname(__file__) else ""
 IN = os.path.join(os.path.dirname(__file__), "camellia.c")
 OUT = os.path.join(os.path.dirname(__file__), version_string())
 
-GCC = os.environ.get('CC', 'cc')
-CMD = "%s %s -shared -fPIC -O3 -o%s" % (GCC, IN, OUT)
+ucc = os.environ.get('CC', 'cc')
 
+acc = ["cc", "gcc", "clang", "tcc"]
+
+if ucc in acc:
+    i = acc.index(ucc)
+    acc.pop(i)
+else:
+    acc = [UCC] + acc
+#CMD = "%s %s -shared -fPIC -O3 -o%s" % (GCC, IN, OUT)
+
+def try_compiler(cc, inf, outf):
+    cmd = "%s %s -shared -fPIC -O3 -o%s" % (cc, inf, outf)
+    print (cmd)
+    try:
+        assert not os.system(cmd)
+    except:
+        print("Compiler %s failed! Not existend or no permission?" % cc)
+        return 1
+    else:
+        return 0
 
 if not os.path.exists(OUT) and sys.platform != "win32":  # win32 is precompiled
-    print("Compiling camellia with %s..." % GCC)
-    print(CMD)
-    try:
-        assert not os.system(CMD)
-    except AssertionError:
-        print("Please install gcc and include camellia.c with this file, "
-              "then run with sudo to compile!")
+    for cc in acc:
+        print("Compiling camellia with %s..." % cc)
+        if not try_compiler(cc, IN, OUT):
+            break
+        
+    else:
+        raise Exception("Please install gcc, clang or tcc and include "
+                        "\"camellia.c\" with this file, then run with "
+                        "sudo to compile!")
+    print("Done!")
 
 
 try:
