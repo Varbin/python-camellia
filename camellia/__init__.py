@@ -146,7 +146,7 @@ key_size = (16, 24, 32)
 block_size = 16
 
 class CamelliaCipher(object):
-    block_size = 16*8
+    block_size = 16
 
     def __init__(self, key, **kwargs):
         self.__key_length = len(key) * 8
@@ -167,6 +167,8 @@ class CamelliaCipher(object):
             self.__IV = kwargs["IV"]
             if len(self.__IV) != self.block_size/8:
                 raise ValueError("IV must be 16 bytes long")
+
+            self.IV = __IV  # self.IV can be changed, but has no effect!
 
         if "counter" in keys:
             self.__counter = kwargs["counter"]
