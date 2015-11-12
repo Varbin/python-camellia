@@ -139,6 +139,9 @@ Camellia_Ekeygen = crypto_engine.Camellia_Ekeygen
 Camellia_Encrypt = crypto_engine.Camellia_Encrypt
 Camellia_Decrypt = crypto_engine.Camellia_Decrypt
 
+def new(*args, **kwargs):
+    return CamelliaCipher(*args, **kwargs)
+
 class CamelliaCipher(object):
     block_size = 16*8
 
