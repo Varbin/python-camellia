@@ -73,7 +73,7 @@ Licenses
     THE SOFTWARE.
 
 
-This software uses the official camellia c mini engines.
+This software uses the official camellia engine. Tey 2-clause-BSD licensed.
 
 .. code::
 
@@ -105,4 +105,12 @@ This software uses the official camellia c mini engines.
 Other things
 ============
 
-This software contains compiled cryptographic libraries which may be restricted by laws in your country. 
+This software contains compiled encryption algorithms which is restricted by law in some countries. 
+
+
+Changelog
+=========
+
+Version 1.0, 2016-10-19:
+    -   The "normal" camellia version is used instead of the mini or reference version.
+    -   Camellia is now loaded using CFFI. This improves speed and avoids shipped DLLs. It's better than the self-made-on-first-use compilation.
