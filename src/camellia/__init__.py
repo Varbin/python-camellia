@@ -15,9 +15,11 @@ MODE_CBC = 2
 MODE_CFB = 3
 #: OFB mode of operation, currently not supported
 MODE_OFB = 5
-#: CTR mode of operation, currently not supported
+#: CTR mode of operation
 MODE_CTR = 6
 
+#: All currently supported blockcipher modes of operation
+SUPPORTED_MODES = [MODE_ECB, MODE_CBC, MODE_CTR]
 
 if sys.version_info.major <= 2:
     b = lambda b: "".join(map(chr, b))
@@ -78,7 +80,7 @@ def Camellia_Decrypt(keyLength, keytable, cipherText):
     return b(out)[:-1]
 
 
-def new(key, mode=MODE_ECB, IV=None, **kwargs):
+def new(key, mode=MODE_ECB, **kwargs):
     """Create an "CamelliaCipher" object.
     It's not fully PEP-272 comliant (yet).
     The default mode is ECB.
@@ -98,7 +100,7 @@ def new(key, mode=MODE_ECB, IV=None, **kwargs):
     :returns: CamelliaCipher
     :raises: ValueError, NotImplementedError
     """
-    return CamelliaCipher(key, mode=mode, IV=IV, **kwargs)
+    return CamelliaCipher(key, mode=mode, **kwargs)
 
 key_size = None
 block_size = 16
@@ -126,7 +128,7 @@ class CamelliaCipher(object):
         keys = kwargs.keys()
         if "mode" in keys:
             self.mode = kwargs["mode"]
-            if self.mode not in [MODE_ECB, MODE_CBC]:
+            if self.mode not in SUPPORTED_MODES:
                 raise NotImplementedError("This mode is not supported!")
         else:
             self.mode = MODE_ECB
@@ -139,7 +141,7 @@ class CamelliaCipher(object):
             # self.IV = IV  # self.IV can be changed, but has no effect!
 
         if "counter" in keys:
-            self.__counter = kwargs["counter"]
+            self.counter = kwargs["counter"]
         elif self.mode == MODE_CTR:
             raise ValueError("CTR needs a counter!")
 
@@ -180,6 +182,23 @@ class CamelliaCipher(object):
                                               xored))
 
                 out.append(self.IV)
+
+            return b''.join(out)
+
+        elif self.mode == MODE_CTR:
+            out = []
+
+            for block in blocks:
+                ctr = self.counter()
+                if len(ctr) != self.blocksize:
+                    raise ValueError("The counter function must return "
+                                     "a bytestring of blocksize in length")
+
+                encrypted_counter = Camellia_Encrypt(self.__key_length,
+                                                     self.__key,
+                                                     self.counter())
+                encrypted_block = xor(block, encrypted_counter)
+                out.append(encrypted_block)
 
             return b''.join(out)
 
@@ -226,6 +245,9 @@ class CamelliaCipher(object):
             self.IV = blocks[-1]
 
             return b''.join(out)
+
+        elif self.mode == MODE_CTR:
+            return self.encrypt(data)
 
         else:
             raise Exception("???")

@@ -17,17 +17,18 @@
         VERSION:     '1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="python-camellia 1.0 documentation" href="index.html" />
-    <link rel="prev" title="Welcome to python-camellia’s documentation!" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Licenses" href="license.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -46,7 +47,7 @@
 <h2>The <em>new</em> constructor<a class="headerlink" href="#the-new-constructor" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="camellia.new">
-<code class="descclassname">camellia.</code><code class="descname">new</code><span class="sig-paren">(</span><em>key</em>, <em>mode=1</em>, <em>IV=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#camellia.new" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">camellia.</code><code class="descname">new</code><span class="sig-paren">(</span><em>key</em>, <em>mode=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#camellia.new" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an &#8220;CamelliaCipher&#8221; object.
 It&#8217;s not fully PEP-272 comliant (yet).
 The default mode is ECB.</p>
@@ -56,9 +57,9 @@ The default mode is ECB.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>key</strong> (<em>bytestring</em>) &#8211; The key for encrytion/decryption. Must be 16/24/32 in length.</li>
-<li><strong>mode</strong> (<em>int, on of MODE_* constants</em>) &#8211; Mode of operation, only ECB (0) and CBC (1) are supported.</li>
+<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>on of MODE_* constants</em>) &#8211; Mode of operation, only ECB (0) and CBC (1) are supported.</li>
 <li><strong>IV</strong> (<em>bytestring</em>) &#8211; Initialisation vector for CBC/CFB/OFB, must be 16 in length.</li>
-<li><strong>counter</strong> (<em>callable, must return bytestrings</em>) &#8211; Counter for CTR.</li>
+<li><strong>counter</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a><em>, </em><em>must return bytestrings</em>) &#8211; Counter for CTR.</li>
 </ul>
 </td>
 </tr>
@@ -102,7 +103,7 @@ The default mode is ECB.</p>
 <dl class="data">
 <dt id="camellia.MODE_CTR">
 <code class="descclassname">camellia.</code><code class="descname">MODE_CTR</code><em class="property"> = 6</em><a class="headerlink" href="#camellia.MODE_CTR" title="Permalink to this definition">¶</a></dt>
-<dd><p>CTR mode of operation, currently not supported</p>
+<dd><p>CTR mode of operation</p>
 </dd></dl>
 
 </div>
@@ -211,14 +212,14 @@ of 16 in length.</td>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to python-camellia&#8217;s documentation!</a></li>
+      <li>Previous: <a href="license.html" title="previous chapter">Licenses</a></li>
   </ul></li>
 </ul>
 </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/API.txt"
+      <li><a href="_sources/API.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -240,11 +241,11 @@ of 16 in length.</td>
       &copy;2016, Simon Biewald.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
       
       |
-      <a href="_sources/API.txt"
+      <a href="_sources/API.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

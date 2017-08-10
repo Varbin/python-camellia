@@ -21,8 +21,8 @@ Features
 
 Because it's build direct on top of the reference implementation, the python-camellia library provides direct 
 access to extreme low-level functions like *Camellia-Ekeygen* but also provides a nearly PEP-compliant 
-cryptographic interface. This semi low-level interface supports encryption (and decryption) in ECB and 
-CBC mode.
+cryptographic interface. This semi low-level interface supports encryption (and decryption) in ECB, 
+CBC and CTR mode.
 
 Installation
 ============
@@ -111,6 +111,7 @@ This software contains compiled encryption algorithms which is restricted by law
 Changelog
 =========
 
-Version 1.0, 2016-10-19:
+For Version 1.0:
     -   The "normal" camellia version is used instead of the mini or reference version.
     -   Camellia is now loaded using CFFI. This improves speed and avoids shipped DLLs. It's better than the self-made-on-first-use compilation.
+    -   Supports CTR mode
