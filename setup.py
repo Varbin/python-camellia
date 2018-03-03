@@ -64,6 +64,6 @@ setup(
 
     ext_modules = [ext],
     setup_requires=['cffi>=1.0.0'],
-    install_requires=['cffi>=1.0.0']
+    install_requires=['cffi>=1.0.0', 'pep272-encryption']
 
 )
