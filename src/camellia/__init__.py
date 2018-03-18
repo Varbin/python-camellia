@@ -7,6 +7,8 @@ except (SystemError, ValueError):  # local tests
 
 import sys
 
+from pep272_encryption import PEP272Cipher
+
 #: ECB mode of operation
 MODE_ECB = 1
 #: CBC mode of operation
@@ -82,7 +84,6 @@ def Camellia_Decrypt(keyLength, keytable, cipherText):
 
 def new(key, mode=MODE_ECB, **kwargs):
     """Create an "CamelliaCipher" object.
-    It's not fully PEP-272 comliant (yet).
     The default mode is ECB.
     
     :param key: The key for encrytion/decryption. Must be 16/24/32 in length.
@@ -95,17 +96,17 @@ def new(key, mode=MODE_ECB, **kwargs):
     :type IV: bytestring
 
     :param counter: Counter for CTR.
-    :type counter: callable, must return bytestrings
+    :type counter: callable, must return bytestrings 16 in length
 
     :returns: CamelliaCipher
     :raises: ValueError, NotImplementedError
     """
-    return CamelliaCipher(key, mode=mode, **kwargs)
+    return CamelliaCipher(key, mode, **kwargs)
 
 key_size = None
 block_size = 16
 
-class CamelliaCipher(object):
+class CamelliaCipher(PEP272Cipher):
     """
     The CamelliaCipher object.
     """
@@ -113,161 +114,45 @@ class CamelliaCipher(object):
     #: block size of the camellia cipher
     block_size = 16 
 
-    def __init__(self, key, **kwargs):
+    def __init__(self, key, mode, **kwargs):
         """
         Constructer of Cipher class. See :func:`camellia.new`.
-
-        *mode* and *IV* must be passed as keyword arguments.
         """
-        self.__key_length = len(key) * 8
-        self.__key = Camellia_Ekeygen(key)
 
-        if len(key) not in (16,24,32):
-            raise ValueError("Key must be 128, 192 or 256 bits long")
+        keytable = Camellia_Ekeygen(key)
+        self.key_length = len(key)*8
+            
 
-        keys = kwargs.keys()
-        if "mode" in keys:
-            self.mode = kwargs["mode"]
-            if self.mode not in SUPPORTED_MODES:
-                raise NotImplementedError("This mode is not supported!")
-        else:
-            self.mode = MODE_ECB
+        PEP272Cipher.__init__(self, keytable, mode, **kwargs)
 
-        if "IV" in keys:
-            self.IV = kwargs["IV"]
-            if len(self.IV) != self.block_size/8:
-                raise ValueError("IV must be 16 bytes long")
+    def encrypt_block(self, key, block, **kwargs):
+        return Camellia_Encrypt(self.key_length, key, block)
 
-            # self.IV = IV  # self.IV can be changed, but has no effect!
+    def decrypt_block(self, key, block, **kwargs):
+        return Camellia_Decrypt(self.key_length, key, block)
 
-        if "counter" in keys:
-            self.counter = kwargs["counter"]
-        elif self.mode == MODE_CTR:
-            raise ValueError("CTR needs a counter!")
 
-    def encrypt(self, data):
-        """
-        Encrypt data.
 
-        :param data:
-            The data to encrypt.
-            For the most modes of operation is must be a multiple
-            of 16 in length.
-        :type data: bytestring
+CamelliaCipher.encrypt.__doc__ = """\
+Encrypt string.
 
-        """
-        blocks = self._block(data)
+:param string:
+    The data to encrypt.
+    For the most modes of operation it must be a multiple
+    of 16 in length.
+:type string: bytestring
+"""
 
-        if self.mode == MODE_ECB:
-            if len(data) % (self.block_size/8):
-                raise ValueError("Input string must be a multiple "
-                                 "of blocksize in length")
 
-            out = []
-            for block in blocks:
-                out.append(Camellia_Encrypt(self.__key_length, self.__key,
-                                            block))
+CamelliaCipher.decrypt.__doc__ = """\
+Decrypt string.
 
-            return b''.join(out)
-
-        elif self.mode == MODE_CBC:
-            if len(data) % (self.block_size/8):
-                raise ValueError("Input string must be a multiple "
-                                 "of blocksize in length")
-
-            out = []
-            for block in blocks:
-                xored = xor(block, self.IV)
-                self.IV = (Camellia_Encrypt(self.__key_length, self.__key,
-                                              xored))
-
-                out.append(self.IV)
-
-            return b''.join(out)
-
-        elif self.mode == MODE_CTR:
-            out = []
-
-            for block in blocks:
-                ctr = self.counter()
-                if len(ctr) != self.blocksize:
-                    raise ValueError("The counter function must return "
-                                     "a bytestring of blocksize in length")
-
-                encrypted_counter = Camellia_Encrypt(self.__key_length,
-                                                     self.__key,
-                                                     self.counter())
-                encrypted_block = xor(block, encrypted_counter)
-                out.append(encrypted_block)
-
-            return b''.join(out)
-
-        else:
-            raise Exception("???")
-
-    def decrypt(self, data):
-        """
-        Decrypt data.
-
-        :param data:
-            The data to decrypt.
-            For the most modes of operation is must be a multiple
-            of 16 in length.
-        :type data: bytestring
-
-        """
-        blocks = self._block(data)
-
-        if self.mode == MODE_ECB:
-            if len(data) % (self.block_size/8):
-                raise ValueError("Input string must be a multiple "
-                                 "of blocksize in length")
-
-            out = []
-            for block in blocks:
-                out.append(Camellia_Decrypt(self.__key_length, self.__key,
-                                            block))
-
-            return b''.join(out)
-
-        elif self.mode == MODE_CBC:
-            if len(data) % (self.block_size/8):
-                raise ValueError("Input string must be a multiple "
-                                 "of blocksize in length")
-
-            out = []
-            blocks = [self.IV] + blocks
-            for i in range(1, len(blocks)):
-                temp = Camellia_Decrypt(self.__key_length, self.__key,
-                                        blocks[i])
-                out.append(xor(temp, blocks[i-1]))
-
-            self.IV = blocks[-1]
-
-            return b''.join(out)
-
-        elif self.mode == MODE_CTR:
-            return self.encrypt(data)
-
-        else:
-            raise Exception("???")
-
-    def _block(self, s):
-        l = []
-        rest_size = int(len(s) % (self.block_size))
-        for i in range(int(len(s)/(self.block_size))):
-            l.append(s[i*(self.block_size):((i+1)*(self.block_size))])
-        if rest_size:
-            # raise ValueError()
-            l.append(s[-rest_size:])
-        return l
-
-if int(sys.version[0]) < 3:
-    def xor(a, b):
-        return "".join([chr(ord(c) ^ ord(d)) for c, d in zip(a, b)])
-else:
-    def xor(a, b):
-        return bytes([c ^ d for c, d in zip(a, b)])
+:param string:
+    The data to decrypt.
+    For the most modes of operation it must be a multiple
+    of 16 in length.
+:type string: bytestring
+"""
 
 
 def test(v=True):
@@ -277,7 +162,7 @@ def test(v=True):
 
     import binascii
 
-    c = CamelliaCipher(binascii.unhexlify(key))
+    c = CamelliaCipher(binascii.unhexlify(key), mode=MODE_ECB)
 
     ec = c.encrypt(binascii.unhexlify(plain))
     
