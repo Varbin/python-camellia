@@ -26,12 +26,12 @@ def make_ffi(source_file, header_file, name, extra_link_args=[]):
 
     with open(source_file) as f:
         source = f.read()
-    
+
     ffi = FFI()
     ffi.cdef(header)
 
     extra_link_args = list(extra_link_args)
-    
+
     if get_compiler().compiler_type == "msvc":
         # DEP + ASLR
         extra_link_args += ["/NXCOMPAT", "/DYNAMICBASE"]
