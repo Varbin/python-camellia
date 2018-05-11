@@ -8,9 +8,9 @@ This is a cryptographic library implementing the camellia cipher in python.
 
    >>> import camellia
    >>> plain = b"This is a text. "
-   >>> c1 = camellia.CamelliaCipher(key=b'16 byte long key', IV=b'16 byte iv. xxxx', mode=camellia.MODE_CBC)
+   >>> c1 = camellia.CamelliaCipher(key=b'16 byte long key', IV=b'16 byte iv. abcd', mode=camellia.MODE_CBC)
    >>> encrypted = c1.encrypt(plain)
-   >>> c2 = camellia.CamelliaCipher(key=b'16 byte long key', IV=b'16 byte iv. xxxx', mode=camellia.MODE_CBC)
+   >>> c2 = camellia.CamelliaCipher(key=b'16 byte long key', IV=b'16 byte iv. abcd', mode=camellia.MODE_CBC)
    >>> c2.decrypt(encrypted)
    b'This is a text. '
 
@@ -20,9 +20,9 @@ Features
 ========
 
 Because it's build direct on top of the reference implementation, the python-camellia library provides direct 
-access to extreme low-level functions like *Camellia-Ekeygen* but also provides a nearly PEP-compliant 
+access to extreme low-level functions like *Camellia-Ekeygen* but also provides a nearly PEP-272-compliant 
 cryptographic interface. This semi low-level interface supports encryption (and decryption) in ECB, 
-CBC and CTR mode.
+CBC, CFB, OFB and CTR modes of operation.
 
 Installation
 ============
@@ -31,21 +31,9 @@ Install with pip:
 
 .. code:: shell
 
-   $ [sudo] pip install python-camellia
+   $ pip install python-camellia
 
 
-After installation the non-python C extension must be compiled, 
-gcc or compitable is required:
-
-.. code:: shell
-
-   $ [sudo] python -m camellia
-
-To specify another compiler define the "CC" variable:
-
-.. code:: shell
-
-   $ [sudo] CC=clang python -m camellia
 
 Licenses
 ========
@@ -73,7 +61,7 @@ Licenses
     THE SOFTWARE.
 
 
-This software uses the official camellia engine. Tey 2-clause-BSD licensed.
+This software uses the official camellia engine which is 2-clause-BSD licensed:
 
 .. code::
 
@@ -105,13 +93,13 @@ This software uses the official camellia engine. Tey 2-clause-BSD licensed.
 Other things
 ============
 
-This software contains compiled encryption algorithms which is restricted by law in some countries. 
+This software contains encryption algorithms which is restricted by law in some countries. 
 
 
 Changelog
 =========
 
-For Version 1.0:
+Version 1.0:
     -   The "normal" camellia version is used instead of the mini or reference version.
     -   Camellia is now loaded using CFFI. This improves speed and avoids shipped DLLs. It's better than the self-made-on-first-use compilation.
-    -   Supports CTR mode
+    -   Supports all standart modes of operation (ECB, CBC, CFB, OFB, CTR)
