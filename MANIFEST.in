@@ -1,9 +1,10 @@
 include LICENSE
 include README.rst
+include setup.cfg
 
 # Required build files
 include src/*
 include src/camellia_build/*
 
 # For new packagers
-include doc/*
+include docs/*
