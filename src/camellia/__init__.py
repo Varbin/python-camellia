@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+r"""Camellia implementation for Python.
+
+Example:
+
+    >>> import camellia
+    >>> cipher = camellia.new(b'\x80'+b'\x00*15, mode=camellia.MODE_ECB)
+    >>> cipher.encrypt(b'\x00'*16)
+    b'l"\x7ft\x93\x19\xa3\xaa}\xa25\xa9\xbb\xa0Z,'
+
+"""
 
 try:
     from ._camellia import lib, ffi
@@ -20,8 +30,6 @@ MODE_OFB = 5
 #: CTR mode of operation
 MODE_CTR = 6
 
-#: All currently supported blockcipher modes of operation
-SUPPORTED_MODES = [MODE_ECB, MODE_CBC, MODE_CTR]
 
 if sys.version_info.major <= 2:
     b = lambda b: "".join(map(chr, b))
@@ -51,6 +59,7 @@ def Camellia_Ekeygen(rawKey):
     return keytable
 
 def Camellia_Encrypt(keyLength, keytable, plainText):
+    r"""Encrypt a plaintext block by given arguments."""
     if keyLength not in [128, 192, 256]:
         raise ValueError("Invalid key length, "
                          "it must be 16, 24 or 32 bytes long!")
@@ -67,6 +76,7 @@ def Camellia_Encrypt(keyLength, keytable, plainText):
     
 
 def Camellia_Decrypt(keyLength, keytable, cipherText):
+    r"""Decrypt a plaintext block by given arguments."""
     if keyLength not in [128, 192, 256]:
         raise ValueError("Invalid key length, "
                          "it must be 16, 24 or 32 bytes long!")
@@ -82,15 +92,14 @@ def Camellia_Decrypt(keyLength, keytable, cipherText):
     return b(out)[:-1]
 
 
-def new(key, mode=MODE_ECB, **kwargs):
+def new(key, mode, **kwargs):
     """Create an "CamelliaCipher" object.
-    The default mode is ECB.
     
     :param key: The key for encrytion/decryption. Must be 16/24/32 in length.
     :type key: bytestring
 
-    :param mode: Mode of operation, only ECB (0) and CBC (1) are supported.
-    :type mode: int, on of MODE_* constants
+    :param mode: Mode of operation.
+    :type mode: int, one of MODE_* constants
 
     :param IV: Initialisation vector for CBC/CFB/OFB, must be 16 in length.
     :type IV: bytestring
@@ -107,55 +116,29 @@ key_size = None
 block_size = 16
 
 class CamelliaCipher(PEP272Cipher):
-    """
-    The CamelliaCipher object.
-    """
+    """The CamelliaCipher object."""
 
     #: block size of the camellia cipher
     block_size = 16 
 
     def __init__(self, key, mode, **kwargs):
-        """
-        Constructer of Cipher class. See :func:`camellia.new`.
-        """
-
+        """Constructer of Cipher class. See :func:`camellia.new`."""
         keytable = Camellia_Ekeygen(key)
         self.key_length = len(key)*8
-            
 
         PEP272Cipher.__init__(self, keytable, mode, **kwargs)
 
     def encrypt_block(self, key, block, **kwargs):
+        """Encrypt a single block with camellia."""
         return Camellia_Encrypt(self.key_length, key, block)
 
     def decrypt_block(self, key, block, **kwargs):
+        """Decrypt a single block with camellia."""
         return Camellia_Decrypt(self.key_length, key, block)
 
 
-
-CamelliaCipher.encrypt.__doc__ = """\
-Encrypt string.
-
-:param string:
-    The data to encrypt.
-    For the most modes of operation it must be a multiple
-    of 16 in length.
-:type string: bytestring
-"""
-
-
-CamelliaCipher.decrypt.__doc__ = """\
-Decrypt string.
-
-:param string:
-    The data to decrypt.
-    For the most modes of operation it must be a multiple
-    of 16 in length.
-:type string: bytestring
-"""
-
-
 def test(v=True):
+    """Small selftest of camellia with a single test vector."""
     key = b"80000000000000000000000000000000"
     plain = b"00000000000000000000000000000000"
     cipher = b"6C227F749319A3AA7DA235A9BBA05A2C"
@@ -172,7 +155,7 @@ def test(v=True):
             print("Required:\tcipher=%s" % cipher.decode())
             return "failed"
         else:
-            raise
+            raise Exception("Camellia does not work as expected!")
 
     dc = c.decrypt(ec)
 
@@ -182,9 +165,12 @@ def test(v=True):
             print("Required:\tcipher=%s" % plain.decode())
             return "failed"
         else:
-            raise
+            raise Exception("Camellia does not work as expected!")
 
     return "passed"
+
+
+assert test(False) == "passed"
 
 if __name__ == "__main__":
     print("Test: "+test())

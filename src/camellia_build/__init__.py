@@ -1,4 +1,22 @@
 #!/usr/bin/env python3
+"""Builder for the C-extension of python-camellia.
+
+Usage:
+    a) __init__.py     Build extension module inplace.
+
+    b) Import camellia_build:
+
+    >>> from camellia_build import ffi
+    >>> extension = ffi.distutils_extension()
+    >>> from setuptools import setup
+    >>> setup(
+        ext_modules = [ext],
+        ...
+        )
+
+The extension will be built as camellia._camellia.
+"""
+
 
 import os
 from ._build_utils import make_ffi

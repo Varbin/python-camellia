@@ -101,5 +101,7 @@ Changelog
 
 Version 1.0:
     -   The "normal" camellia version is used instead of the mini or reference version.
-    -   Camellia is now loaded using CFFI. This improves speed and avoids shipped DLLs. It's better than the self-made-on-first-use compilation.
+    -   Camellia is now loaded using CFFI. This improves speed and avoids shipped DLLs. It's better than the self-made-on-first-use compilation,
+        which 
     -   Supports all standart modes of operation (ECB, CBC, CFB, OFB, CTR)
+    -   Electronic code book mode of operation is not implicit default anymore.

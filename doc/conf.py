@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#
+"""Sphinx configuration for python-camellia."""
 # python-camellia documentation build configuration file, created by
 # sphinx-quickstart on Sun Oct 30 00:20:11 2016.
 #

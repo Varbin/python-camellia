@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+"""
+Setup script for module `python-camellia`.
+
+Usage:
+    setup.py build          Builds extension modules and prepares for 
+                            installation
+    setup.py install        Installs module
+
+    setup.py sdist          Creates source package
+    setup.py bdist_wheel    Creates a `wheel` binary package
+"""
 
 from __future__ import print_function
 
@@ -21,11 +32,12 @@ import camellia_build
 description = 'Camellia-cipher in Python'
 
 
-def long_description():
+def long_description(short=description):
+    """Try to read README.rst or returns fallback."""
     try:
         return open('README.rst').read()
     except:
-        return description
+        return short
 
 
 ext = camellia_build.ffi.distutils_extension()
