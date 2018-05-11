@@ -32,9 +32,11 @@ MODE_CTR = 6
 
 
 if sys.version_info.major <= 2:
-    b = lambda b: "".join(map(chr, b))
+    def b(b):
+        return "".join(map(chr, b))
 else:
     b = bytes
+
 
 def Camellia_Ekeygen(rawKey):
     """
@@ -42,7 +44,7 @@ def Camellia_Ekeygen(rawKey):
 
     :param rawKey: raw encryption key, 16, 24 or 32 bytes long
     :type rawKey: bytestring
-    
+
     :returns: `CFFI <https://cffi.readthedocs.io/en/latest/>`_ array
     """
     keyLength = len(rawKey)*8
@@ -57,6 +59,7 @@ def Camellia_Ekeygen(rawKey):
     lib.Camellia_Ekeygen(keyLength, raw_key, keytable)
 
     return keytable
+
 
 def Camellia_Encrypt(keyLength, keytable, plainText):
     r"""Encrypt a plaintext block by given arguments."""
@@ -73,7 +76,7 @@ def Camellia_Encrypt(keyLength, keytable, plainText):
     lib.Camellia_EncryptBlock(keyLength, inp, keytable, out)
 
     return b(out)[:-1]
-    
+
 
 def Camellia_Decrypt(keyLength, keytable, cipherText):
     r"""Decrypt a plaintext block by given arguments."""
@@ -94,7 +97,7 @@ def Camellia_Decrypt(keyLength, keytable, cipherText):
 
 def new(key, mode, **kwargs):
     """Create an "CamelliaCipher" object.
-    
+
     :param key: The key for encrytion/decryption. Must be 16/24/32 in length.
     :type key: bytestring
 
@@ -112,14 +115,16 @@ def new(key, mode, **kwargs):
     """
     return CamelliaCipher(key, mode, **kwargs)
 
+
 key_size = None
 block_size = 16
+
 
 class CamelliaCipher(PEP272Cipher):
     """The CamelliaCipher object."""
 
     #: block size of the camellia cipher
-    block_size = 16 
+    block_size = 16
 
     def __init__(self, key, mode, **kwargs):
         """Constructer of Cipher class. See :func:`camellia.new`."""
@@ -148,7 +153,7 @@ def test(v=True):
     c = CamelliaCipher(binascii.unhexlify(key), mode=MODE_ECB)
 
     ec = c.encrypt(binascii.unhexlify(plain))
-    
+
     if not ec == binascii.unhexlify(cipher):
         if v:
             print("Result:\t\tcipher=%s" % binascii.hexlify(ec).decode())
