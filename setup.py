@@ -3,12 +3,11 @@
 Setup script for module `python-camellia`.
 
 Usage:
-    setup.py build          Builds extension modules and prepares for 
-                            installation
-    setup.py install        Installs module
+    setup.py build          Build extension modules and prepare for install.
+    setup.py install        Install module.
 
-    setup.py sdist          Creates source package
-    setup.py bdist_wheel    Creates a `wheel` binary package
+    setup.py sdist          Create source package.
+    setup.py bdist_wheel    Create a `wheel` binary package.
 """
 
 from __future__ import print_function
@@ -19,15 +18,15 @@ import glob
 
 try:
     from setuptools import setup, find_packages
-except ImportError:    
+except ImportError:
     print('This module requires setuptools.')
     print('Please install setuptools with get-pip.py!')
-    
+
     sys.exit(1)
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
-    
-import camellia_build
+
+import camellia_build  # nopep8
 
 description = 'Camellia-cipher in Python'
 
@@ -36,12 +35,13 @@ def long_description(short=description):
     """Try to read README.rst or returns fallback."""
     try:
         return open('README.rst').read()
-    except:
+    except FileNotFoundError:
         return short
 
 
 ext = camellia_build.ffi.distutils_extension()
-ext.include_dirs.append(os.path.join(os.path.dirname(__file__), 'src', 'camellia_build'))
+ext.include_dirs.append(
+    os.path.join(os.path.dirname(__file__), 'src', 'camellia_build'))
 
 
 setup(
@@ -52,11 +52,11 @@ setup(
     author='Simon Biewald',
     author_email='simon.biewald@homtail.de',
     url='https://github.com/var-sec/python-camellia',
-    packages = ['camellia'],
-    package_dir = {'camellia':'src/camellia'},
+    packages=['camellia'],
+    package_dir={'camellia': 'src/camellia'},
 
-    license = 'MIT',
-    classifiers = [
+    license='MIT',
+    classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
@@ -68,13 +68,13 @@ setup(
         'Topic :: Security',
         'Topic :: Security :: Cryptography',
     ],
-    keywords = [
+    keywords=[
         'camellia', 'encryption', 'decryption', 'cipher',
     ],
 
-    platforms = ['all'],
+    platforms=['all'],
 
-    ext_modules = [ext],
+    ext_modules=[ext],
     setup_requires=['cffi>=1.0.0'],
     install_requires=['cffi>=1.0.0', 'pep272-encryption']
 
