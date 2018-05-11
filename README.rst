@@ -4,6 +4,10 @@ python-camellia
 
 This is a cryptographic library implementing the camellia cipher in python.
 
+`API-reference`_
+
+.. API-reference: https://sbiewald.de/docs/python-camellia/
+
 .. code:: python
 
    >>> import camellia
