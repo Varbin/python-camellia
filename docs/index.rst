@@ -25,7 +25,8 @@ a cryptographic library implementing the
    :maxdepth: 2
 
    install
+   api
    license
-   API
+
 
 

@@ -22,7 +22,8 @@ The *CamelliaCipher* class
 .. autoclass:: camellia.CamelliaCipher
     :members:
     
-    .. automethod:: camellia.CamelliaCipher.__init__
+    .. automethod:: camellia.CamelliaCipher.encrypt
+    .. automethod:: camellia.CamelliaCipher.decrypt
     
 Low-level camellia functions
 ----------------------------

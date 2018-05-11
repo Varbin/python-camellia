@@ -105,3 +105,4 @@ Version 1.0:
         which 
     -   Supports all standart modes of operation (ECB, CBC, CFB, OFB, CTR)
     -   Electronic code book mode of operation is not implicit default anymore.
+    -   Now camellia.Camellia_Ekeygen returns a list instead of an CFFI array.

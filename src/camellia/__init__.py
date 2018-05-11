@@ -23,9 +23,9 @@ from pep272_encryption import PEP272Cipher
 MODE_ECB = 1
 #: CBC mode of operation
 MODE_CBC = 2
-#: CFB mode of operation, currently not supported
+#: CFB mode of operation
 MODE_CFB = 3
-#: OFB mode of operation, currently not supported
+#: OFB mode of operation
 MODE_OFB = 5
 #: CTR mode of operation
 MODE_CTR = 6
@@ -33,6 +33,7 @@ MODE_CTR = 6
 
 if sys.version_info.major <= 2:
     def b(b):
+        """Create bytes from a list of ints."""
         return "".join(map(chr, b))
 else:
     b = bytes
@@ -42,30 +43,42 @@ def Camellia_Ekeygen(rawKey):
     """
     Make a keytable from a key.
 
-    :param rawKey: raw encryption key, 16, 24 or 32 bytes long
-    :type rawKey: bytestring
+    :param rawKey: raw encryption key, 128, 192 or 256 bits long
+    :type rawKey: bytes
 
-    :returns: `CFFI <https://cffi.readthedocs.io/en/latest/>`_ array
+    :returns: keytable
     """
     keyLength = len(rawKey)*8
 
     if keyLength not in [128, 192, 256]:
         raise ValueError("Invalid key length, "
-                         "it must be 16, 24 or 32 bytes long!")
+                         "it must be 128, 192 or 256 bits long!")
 
     raw_key = ffi.new("const unsigned char []", rawKey)
     keytable = ffi.new("KEY_TABLE_TYPE")
 
     lib.Camellia_Ekeygen(keyLength, raw_key, keytable)
 
-    return keytable
+    return list(keytable)
 
 
 def Camellia_Encrypt(keyLength, keytable, plainText):
-    r"""Encrypt a plaintext block by given arguments."""
+    r"""Encrypt a plaintext block by given arguments.
+
+    :param keyLength: key length (128, 192 or 256 bits)
+    :type rawKey: int
+
+    :param keytable: keytable returned by Camellia_Ekeygen
+    :type keytable: list
+
+    :param plainText: one plaintext block to encrypt (16 bytes in length)
+    :type plainText: bytes
+
+    :returns: ciphertext block
+    """
     if keyLength not in [128, 192, 256]:
         raise ValueError("Invalid key length, "
-                         "it must be 16, 24 or 32 bytes long!")
+                         "it must be 128, 192 or 256 bits long!")
 
     if len(plainText) != 16:
         raise ValueError("Plain text length must be 16!")
@@ -79,10 +92,22 @@ def Camellia_Encrypt(keyLength, keytable, plainText):
 
 
 def Camellia_Decrypt(keyLength, keytable, cipherText):
-    r"""Decrypt a plaintext block by given arguments."""
+    r"""Decrypt a plaintext block by given arguments.
+
+    :param keyLength: key length (128, 192 or 256 bits)
+    :type rawKey: int
+
+    :param keytable: keytable returned by Camellia_Ekeygen
+    :type keytable: list
+
+    :param cipherText: one cipher block to decrypt (16 bytes in length)
+    :type cipherText: bytes
+
+    :returns: plaintext block
+    """
     if keyLength not in [128, 192, 256]:
         raise ValueError("Invalid key length, "
-                         "it must be 16, 24 or 32 bytes long!")
+                         "it must be 128, 192 or 256 bits long!")
 
     if len(cipherText) != 16:
         raise ValueError("Cipher text length must be 16!")
@@ -99,16 +124,18 @@ def new(key, mode, **kwargs):
     """Create an "CamelliaCipher" object.
 
     :param key: The key for encrytion/decryption. Must be 16/24/32 in length.
-    :type key: bytestring
+    :type key: bytes
 
     :param mode: Mode of operation.
     :type mode: int, one of MODE_* constants
 
-    :param IV: Initialisation vector for CBC/CFB/OFB, must be 16 in length.
-    :type IV: bytestring
+    :param IV: Initialization vector for CBC/CFB/OFB blockcipher modes of
+        operation, must be 16 bytes in length.
+    :type IV: bytes
 
-    :param counter: Counter for CTR.
-    :type counter: callable, must return bytestrings 16 in length
+    :param counter: Counter for CTR blockcipher mode of operation.
+        Each call must return 16 bytes.
+    :type counter: callable
 
     :returns: CamelliaCipher
     :raises: ValueError, NotImplementedError
