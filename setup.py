@@ -52,6 +52,10 @@ setup(
     author='Simon Biewald',
     author_email='simon.biewald@homtail.de',
     url='https://github.com/var-sec/python-camellia',
+    project_urls={
+        'Documentation': 'https://sbiewald.de/docs/python-camellia',
+        'Tracker': 'https://github.com/Varbin/python-camellia/issues'
+    },
     packages=['camellia'],
     package_dir={'camellia': 'src/camellia'},
 
