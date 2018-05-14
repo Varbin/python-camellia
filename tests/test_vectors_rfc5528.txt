@@ -1,0 +1,122 @@
+TV #1: Encrypting 16 octets using Camellia-CTR with 128-bit key
+Camellia Key     : AE 68 52 F8 12 10 67 CC 4B F7 A5 76 55 77 F3 9E
+Camellia-CTR IV  : 00 00 00 00 00 00 00 00
+Nonce            : 00 00 00 30
+Plaintext        : 53 69 6E 67 6C 65 20 62 6C 6F 63 6B 20 6D 73 67
+Counter Block (1): 00 00 00 30 00 00 00 00 00 00 00 00 00 00 00 01
+Key Stream    (1): 83 F4 AC FD EE 71 41 F8 4C E8 1F 1D FB 72 78 58
+Ciphertext       : D0 9D C2 9A 82 14 61 9A 20 87 7C 76 DB 1F 0B 3F
+
+TV #2: Encrypting 32 octets using Camellia-CTR with 128-bit key
+Camellia Key     : 7E 24 06 78 17 FA E0 D7 43 D6 CE 1F 32 53 91 63
+Camellia-CTR IV  : C0 54 3B 59 DA 48 D9 0B
+Nonce            : 00 6C B6 DB
+Plaintext        : 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+                 : 10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F
+Counter Block (1): 00 6C B6 DB C0 54 3B 59 DA 48 D9 0B 00 00 00 01
+Key Stream    (1): DB F2 C5 8E C4 86 90 D3 D2 75 9A 7C 69 B6 C5 4B
+Counter Block (2): 00 6C B6 DB C0 54 3B 59 DA 48 D9 0B 00 00 00 02
+Key Stream    (2): 3B 9F 9C 1C 25 E5 CA B0 34 6D 0D F8 4F 7D FE 57
+Ciphertext       : DB F3 C7 8D C0 83 96 D4 DA 7C 90 77 65 BB CB 44
+                 : 2B 8E 8E 0F 31 F0 DC A7 2C 74 17 E3 53 60 E0 48
+
+TV #3: Encrypting 36 octets using Camellia-CTR with 128-bit key
+Camellia Key     : 76 91 BE 03 5E 50 20 A8 AC 6E 61 85 29 F9 A0 DC
+Camellia-CTR IV  : 27 77 7F 3F 4A 17 86 F0
+Nonce            : 00 E0 01 7B
+Plaintext        : 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+                 : 10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F
+                 : 20 21 22 23
+Counter Block (1): 00 E0 01 7B 27 77 7F 3F 4A 17 86 F0 00 00 00 01
+Key Stream    (1): B1 9C 1D CE CF 70 ED 8F 27 8D 96 E9 41 88 C1 7C
+Counter Block (2): 00 E0 01 7B 27 77 7F 3F 4A 17 86 F0 00 00 00 02
+Key Stream    (2): 8C F7 59 38 48 88 65 E6 57 34 47 86 D2 85 97 D2
+Counter Block (3): 00 E0 01 7B 27 77 7F 3F 4A 17 86 F0 00 00 00 03
+Key Stream    (3): FF 71 A4 B5 D8 86 12 53 6A 9D 10 A1 13 0F 14 F8
+Ciphertext       : B1 9D 1F CD CB 75 EB 88 2F 84 9C E2 4D 85 CF 73
+                 : 9C E6 4B 2B 5C 9D 73 F1 4F 2D 5D 9D CE 98 89 CD
+                 : DF 50 86 96
+
+TV #4: Encrypting 16 octets using Camellia-CTR with 192-bit key
+Camellia Key     : 16 AF 5B 14 5F C9 F5 79 C1 75 F9 3E 3B FB 0E ED
+                 : 86 3D 06 CC FD B7 85 15
+Camellia-CTR IV  : 36 73 3C 14 7D 6D 93 CB
+Nonce            : 00 00 00 48
+Plaintext        : 53 69 6E 67 6C 65 20 62 6C 6F 63 6B 20 6D 73 67
+Counter Block (1): 00 00 00 48 36 73 3C 14 7D 6D 93 CB 00 00 00 01
+Key Stream    (1): 70 10 57 F9 E6 E8 0B 49 7A 1F 4C AC AB F3 E5 F1
+Ciphertext       : 23 79 39 9E 8A 8D 2B 2B 16 70 2F C7 8B 9E 96 96
+
+TV #5: Encrypting 32 octets using Camellia-CTR with 192-bit key
+Camellia Key     : 7C 5C B2 40 1B 3D C3 3C 19 E7 34 08 19 E0 F6 9C
+                 : 67 8C 3D B8 E6 F6 A9 1A
+Camellia-CTR IV  : 02 0C 6E AD C2 CB 50 0D
+Nonce            : 00 96 B0 3B
+Plaintext        : 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+                 : 10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F
+Counter Block (1): 00 96 B0 3B 02 0C 6E AD C2 CB 50 0D 00 00 00 01
+Key Stream    (1): 7D EE 36 F4 A1 D5 E2 12 6F 42 75 F7 A2 6A C9 52
+Counter Block (2): 00 96 B0 3B 02 0C 6E AD C2 CB 50 0D 00 00 00 02
+Key Stream    (2): C0 09 AA 7C E6 25 47 F7 4E 20 30 82 EF 47 52 F2
+Ciphertext       : 7D EF 34 F7 A5 D0 E4 15 67 4B 7F FC AE 67 C7 5D
+                 : D0 18 B8 6F F2 30 51 E0 56 39 2A 99 F3 5A 4C ED
+
+TV #6: Encrypting 36 octets using Camellia-CTR with 192-bit key
+Camellia Key     : 02 BF 39 1E E8 EC B1 59 B9 59 61 7B 09 65 27 9B
+                 : F5 9B 60 A7 86 D3 E0 FE
+Camellia-CTR IV  : 5C BD 60 27 8D CC 09 12
+Nonce            : 00 07 BD FD
+Plaintext        : 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+                 : 10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F
+                 : 20 21 22 23
+Counter Block (1): 00 07 BD FD 5C BD 60 27 8D CC 09 12 00 00 00 01
+Key Stream    (1): 57 11 E7 55 E5 4D 7C 27 BD A5 04 78 FD 93 40 77
+Counter Block (2): 00 07 BD FD 5C BD 60 27 8D CC 09 12 00 00 00 02
+Key Stream    (2): 66 E2 6D CF 85 A4 F9 5A 55 B4 F2 FD 7A BB 53 11
+Counter Block (3): 00 07 BD FD 5C BD 60 27 8D CC 09 12 00 00 00 03
+Key Stream    (3): F5 76 89 74 63 52 A8 C5 1E 82 DE 66 C3 9F 38 34
+Ciphertext       : 57 10 E5 56 E1 48 7A 20 B5 AC 0E 73 F1 9E 4E 78
+                 : 76 F3 7F DC 91 B1 EF 4D 4D AD E8 E6 66 A6 4D 0E
+                 : D5 57 AB 57
+
+TV #7: Encrypting 16 octets using Camellia-CTR with 256-bit key
+Camellia Key     : 77 6B EF F2 85 1D B0 6F 4C 8A 05 42 C8 69 6F 6C
+                 : 6A 81 AF 1E EC 96 B4 D3 7F C1 D6 89 E6 C1 C1 04
+Camellia-CTR IV  : DB 56 72 C9 7A A8 F0 B2
+Nonce            : 00 00 00 60
+Plaintext        : 53 69 6E 67 6C 65 20 62 6C 6F 63 6B 20 6D 73 67
+Counter Block (1): 00 00 00 60 DB 56 72 C9 7A A8 F0 B2 00 00 00 01
+Key Stream    (1): 67 68 97 AF 48 1B DF AC D1 06 F7 1A 6C 76 C8 76
+Ciphertext       : 34 01 F9 C8 24 7E FF CE BD 69 94 71 4C 1B BB 11
+
+TV #8: Encrypting 32 octets using Camellia-CTR with 256-bit key
+Camellia Key     : F6 D6 6D 6B D5 2D 59 BB 07 96 36 58 79 EF F8 86
+                 : C6 6D D5 1A 5B 6A 99 74 4B 50 59 0C 87 A2 38 84
+Camellia-CTR IV  : C1 58 5E F1 5A 43 D8 75
+Nonce            : 00 FA AC 24
+Plaintext        : 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+                 : 10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F
+Counter Block (1): 00 FA AC 24 C1 58 5E F1 5A 43 D8 75 00 00 00 01
+Key Stream    (1): D6 C2 01 91 20 6A 7E 0F A0 35 21 29 A4 8E 90 4A
+Counter Block (2): 00 FA AC 24 C1 58 5E F1 5A 43 D8 75 00 00 00 02
+Key Stream    (2): F5 0D C6 99 08 CA 56 79 A4 85 D8 C8 B7 9E 5F 17
+Ciphertext       : D6 C3 03 92 24 6F 78 08 A8 3C 2B 22 A8 83 9E 45
+                 : E5 1C D4 8A 1C DF 40 6E BC 9C C2 D3 AB 83 41 08
+
+TV #9: Encrypting 36 octets using Camellia-CTR with 256-bit key
+Camellia Key     : FF 7A 61 7C E6 91 48 E4 F1 72 6E 2F 43 58 1D E2
+                 : AA 62 D9 F8 05 53 2E DF F1 EE D6 87 FB 54 15 3D
+Camellia-CTR IV  : 51 A5 1D 70 A1 C1 11 48
+Nonce            : 00 1C C5 B7
+Plaintext        : 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+                 : 10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F
+                 : 20 22 21 23
+Counter Block (1): 00 1C C5 B7 51 A5 1D 70 A1 C1 11 48 00 00 00 01
+Key Stream    (1): A4 DB 21 FF E2 A0 F9 AD 65 6D A4 91 0A 5F AA 23
+Counter Block (2): 00 1C C5 B7 51 A5 1D 70 A1 C1 11 48 00 00 00 02
+Key Stream    (2): C1 70 B1 58 71 EC 71 88 6D D9 05 0B 03 6C 39 70
+Counter Block (3): 00 1C C5 B7 51 A5 1D 70 A1 C1 11 48 00 00 00 03
+Key Stream    (3): 35 CE 2F AE 90 78 B3 72 F5 76 12 39 1F 8B AF BF
+Ciphertext       : A4 DA 23 FC E6 A5 FF AA 6D 64 AE 9A 06 52 A4 2C
+                 : D1 61 A3 4B 65 F9 67 9F 75 C0 1F 10 1F 71 27 6F
+                 : 15 EF 0D 8D
