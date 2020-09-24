@@ -50,6 +50,9 @@ setup(
     },
     packages=['camellia'],
     package_dir={'camellia': 'src/camellia'},
+    package_data={
+        "": ["py.typed", "*.pyi"],
+    },
 
     cffi_modules=['src/_camellia_build/camellia_build.py:ffi'],
 
@@ -66,6 +69,7 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Security :: Cryptography',
+        'Typing :: Typed'
     ],
     keywords=[
         'camellia', 'encryption', 'block cipher'
