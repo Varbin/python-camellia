@@ -15,6 +15,7 @@ import collections
 import os
 
 import camellia
+import pytest
 
 VECTOR_FILENAME = os.path.join(
     os.path.dirname(__file__),
@@ -31,7 +32,7 @@ MODES = {
     "OFB": camellia.MODE_OFB
 }
 
-TestvectorOpenSSL = collections.namedtuple(
+_TestvectorOpenSSL = collections.namedtuple(
     "TestvectorOpenSSL",
     ["mode", "key", "iv", "plain", "cipher", "encdec"])
 
@@ -41,10 +42,12 @@ def _get_vectors_openssl(
         algo="camellia",
         mode="ECB"):
 
-    data = []
+    parsed_vectors = {}
+    lineno = 0
     with open(filename) as vectors:
         for line in vectors:
             line = line.strip()
+            lineno += 1
 
             if not line or line.startswith("#"):
                 continue
@@ -61,96 +64,40 @@ def _get_vectors_openssl(
                     mode.upper() in desc):
                 continue
 
-            data.append(
-                TestvectorOpenSSL(
-                    mode,
-                    key,
-                    iv,
-                    plain,
-                    cipher,
-                    encdec))
+            parsed_vectors[lineno] = _TestvectorOpenSSL(
+                mode,
+                key,
+                iv,
+                plain,
+                cipher,
+                encdec)
 
-    return data
-
-
-def _do_tests(mode):
-    vectors = _get_vectors_openssl(mode=mode)
-    for vector in vectors:
-        key, iv, plain_text, cipher_text = map(
-            binascii.unhexlify, (
-                vector.key, vector.iv or b'00'*16,
-                vector.plain, vector.cipher))
-
-        if mode == "ECB":
-            iv = None
-
-        cipher_kwargs = dict(key=key, mode=MODES[mode])
-        if mode != "ECB":
-            cipher_kwargs["IV"] = iv
-        if mode == "CFB":
-            cipher_kwargs["segment_size"] = 128
-
-        if vector.encdec in (ACTION_ENCRYPT, ACTION_BOTH):
-            cipher = camellia.new(**cipher_kwargs)
-            try:
-                assert cipher.encrypt(plain_text) == cipher_text
-            except AssertionError:
-                print("Key:\t\t\t", vector.key)
-                if mode != "ECB":
-                    print("Initialization vector:\t", vector.iv)
-                print()
-                print("Plaintext:\t\t", vector.plain)
-                print("Ciphertext (result):\t",
-                      binascii.hexlify(
-                        cipher.encrypt(plain_text)).decode())
-                print("Ciphertext (expected):\t", vector.cipher)
-                raise
-
-        if vector.encdec in (ACTION_DECRYPT, ACTION_BOTH):
-            cipher = camellia.new(**cipher_kwargs)
-            try:
-                assert cipher.decrypt(cipher_text) == plain_text
-            except AssertionError:
-                print("Key:\t\t\t", vector.key)
-                if mode != "ECB":
-                    print("Initialization vector:\t", vector.iv)
-                print()
-                print("Ciphertext:\t\t", vector.cipher)
-                print("Plaintext (result):\t",
-                      binascii.hexlify(
-                        cipher.decrypt(cipher_text)).decode())
-                print("Plaintext (expected):\t", vector.plain)
-                raise
+    return parsed_vectors
 
 
-def test_ecb():
-    """Test python-camellia's ECB mode against OpenSSL tests."""
-    _do_tests("ECB")
+@pytest.mark.parametrize("lineno, vector", _get_vectors_openssl().items())
+def test_vectors_openssl(lineno, vector):
+    mode = vector.mode
+    key, iv, plain_text, cipher_text = map(
+        binascii.unhexlify, (
+            vector.key, vector.iv or b'00' * 16,
+            vector.plain, vector.cipher))
 
+    if mode == "ECB":
+        iv = None
 
-def test_cbc():
-    """Test python-camellia's CBC mode against OpenSSL tests."""
-    _do_tests("CBC")
+    cipher_kwargs = dict(key=key, mode=MODES[mode])
+    if mode != "ECB":
+        cipher_kwargs["IV"] = iv
+    if mode == "CFB":
+        cipher_kwargs["segment_size"] = 128
 
+    if vector.encdec in (ACTION_ENCRYPT, ACTION_BOTH):
+        cipher = camellia.new(**cipher_kwargs)
 
-def test_cfb():
-    """Test python-camellia's CFB mode against OpenSSL tests."""
-    _do_tests("CFB")
+        assert cipher.encrypt(plain_text) == cipher_text
 
+    if vector.encdec in (ACTION_DECRYPT, ACTION_BOTH):
+        cipher = camellia.new(**cipher_kwargs)
 
-def test_ofb():
-    """Test python-camellia's OFB mode against OpenSSL tests."""
-    _do_tests("OFB")
-
-
-if __name__ == '__main__':
-    import __main__
-    for name in dir(__main__):
-        if name.startswith("test_") and callable(eval(name)):
-            print(name, end=': ')
-            try:
-                eval(name)()
-            except AssertionError:
-                print("failed")
-                raise
-            print("ok")
+        assert cipher.decrypt(cipher_text) == plain_text

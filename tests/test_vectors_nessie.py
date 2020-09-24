@@ -15,18 +15,18 @@ import collections
 import os
 
 import camellia
+import pytest
 
 VECTOR_FILENAME = os.path.join(os.path.dirname(__file__),
                                "test_vectors_nessie.txt")
 
-
-TestvectorNessie = collections.namedtuple(
+_TestvectorNessie = collections.namedtuple(
     "TestvectorNessie",
     ["name", "key", "plain", "cipher", "decrypted", "i100", "i1000"])
 
 
 def _get_test_vectors_nessie(filename=VECTOR_FILENAME):
-    vectors = []
+    vectors = {}
     with open(VECTOR_FILENAME) as vector_file:
         for line in vector_file:
             line = line.strip()
@@ -44,21 +44,14 @@ def _get_test_vectors_nessie(filename=VECTOR_FILENAME):
                 _, i100 = line.split("=")
             if "Iterated 1000 times=" in line:
                 _, i1000 = line.split("=")
-                vectors.append(
-                    TestvectorNessie(
-                        name, key, plain, cipher, decrypted, i100,
-                        i1000))
+                vectors[name] = _TestvectorNessie(
+                    name, key, plain, cipher, decrypted, i100, i1000)
+
     return vectors
 
 
-CODE_TEST = """\
-def test_set{set}_vector{vector}():
-    \"""Test python-camellia against Set \
-{set}, vector# {vector} of NESSIE tests.
-
-    This function is dynamically created - the vectors file
-    is required to be in the same folder as the the script.\"""
-    vector = {tuple}
+@pytest.mark.parametrize("name, vector", _get_test_vectors_nessie().items())
+def test_vectors_nessie(name, vector):
     (key, plain, cipher, decrypted, i100, i1000) = map(
         binascii.unhexlify, vector[1:])
 
@@ -75,63 +68,7 @@ def test_set{set}_vector{vector}():
     for i in range(1000):
         i1000_result = cam.encrypt(i1000_result)
 
-    try:
-        assert cipher == cipher_result
-        assert decrypted == decrypted_result
-        assert i100 == i100_result
-        assert i1000 == i1000_result
-    except AssertionError:
-        print(vector.name, "failed")
-        print()
-        print("Key:")
-        print(vector.key)
-        print()
-
-        print("Ciphertext (expected, result):")
-        print(vector.cipher)
-        print(binascii.hexlify(cipher_result).upper().decode())
-        print()
-
-        print("Decrypted ciphertext (expected, result):")
-        print(vector.decrypted)
-        print(binascii.hexlify(
-            decrypted_result).upper().decode())
-        print()
-
-        print("Iterated 100 times (expected, result):")
-        print(vector.i100)
-        print(binascii.hexlify(
-            i100_result).upper().decode())
-        print()
-
-        print("Ciphertext (expected, result):")
-        print(vector.i1000)
-        print(binascii.hexlify(
-            i1000_result).upper().decode())
-        print()
-
-        raise"""
-
-# Quick and dirty test generation for progress
-# in test runners (nose, pytest), allows easier debugging
-
-for vector in _get_test_vectors_nessie():
-    split = vector.name.split(", ")
-    set_n = split[0].split(" ")[-1]
-    vector_n = split[-1].split("#")[-1].split(" ")[-1]
-
-    code = CODE_TEST.format(
-        set=set_n,
-        vector=vector_n,
-        tuple=repr(tuple(vector)))
-
-    exec(code)
-
-
-if __name__ == '__main__':
-    import __main__
-    for name in dir(__main__):
-        if name.startswith("test_") and callable(eval(name)):
-            print(name, end=': ')
-            eval(name)()
-            print("ok")
+    assert cipher == cipher_result
+    assert decrypted == decrypted_result
+    assert i100 == i100_result
+    assert i1000 == i1000_result

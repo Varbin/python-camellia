@@ -13,20 +13,20 @@ It may be run standalone or by a testrunner (nose, pytest).
 import binascii
 import collections
 import os
-import string
 import struct
 
 import camellia
+import pytest
 
 VECTOR_FILENAME = os.path.join(os.path.dirname(__file__),
                                "test_vectors_rfc5528.txt")
 
 
-TestvectorRFC5528 = collections.namedtuple(
+_TestvectorRFC5528 = collections.namedtuple(
     "TestvectorRFC5528",
     ["n", "desc", "key", "iv", "nonce", "plain", "cipher"])
 
-TestvectorRFC5528Counter = collections.namedtuple(
+_TestvectorRFC5528Counter = collections.namedtuple(
     "TestvectorRFC5528Counter",
     ["n", "iv", "nonce", "counter_block"])
 
@@ -45,8 +45,8 @@ class Counter:
 
 
 def _get_test_vectors_rfc5228(filename=VECTOR_FILENAME):
-    vectors_cipher = []
-    vectors_counter = []
+    vectors = {}
+
     with open(VECTOR_FILENAME) as vector_file:
         for line in vector_file:
             line = line.strip()
@@ -55,10 +55,12 @@ def _get_test_vectors_rfc5228(filename=VECTOR_FILENAME):
                 key, iv, nonce, plain, cipher, counter = map(
                     lambda x: x.replace(" ", ""),
                     (key, iv, nonce, plain, cipher, counter))
-                vectors_cipher.append(TestvectorRFC5528(
-                    n, desc, key, iv, nonce, plain, cipher))
-                vectors_counter.append(TestvectorRFC5528Counter(
-                    n, iv, nonce, counter))
+                vectors[n] = (
+                    _TestvectorRFC5528(
+                        n, desc, key, iv, nonce, plain, cipher),
+                    _TestvectorRFC5528Counter(
+                        n, iv, nonce, counter)
+                )
 
                 continue
 
@@ -103,17 +105,19 @@ def _get_test_vectors_rfc5228(filename=VECTOR_FILENAME):
                 elif last == "cipher":
                     cipher += value
 
-
-    return vectors_cipher, vectors_counter
-
+    return vectors
 
 
-vectors_cipher, vectors_counter = _get_test_vectors_rfc5228()
+VECTORS = _get_test_vectors_rfc5228()
 
-CODE_TEST_COUNTER = r'''def test_rfc5228_counter_{n}():
-    """Test counter against returns of TV# {n} in RFC5228."""
-    c = Counter({nonce}, {iv})
-    t = "{counter_block}"
+
+@pytest.mark.parametrize("n, vector_and_counter", VECTORS.items())
+def test_vectors_rfc5228_counter(n, vector_and_counter):
+    """Test counters of RFC5228."""
+    counter = vector_and_counter[1]
+    c = Counter(binascii.unhexlify(counter.nonce),
+                binascii.unhexlify(counter.iv))
+    t = counter.counter_block
 
     v = b"".join([c() for i in range(len(t)//32)])
 
@@ -123,12 +127,11 @@ CODE_TEST_COUNTER = r'''def test_rfc5228_counter_{n}():
         print("Expected:\t", t)
         print("Got:\t\t", binascii.hexlify(v).decode())
         raise
-'''
 
-CODE_TEST_CTR = r'''
-def test_rfc5228_ctr_{n}():
-    """{desc}"""
-    vector = {vector}
+
+@pytest.mark.parametrize("n, vector_and_counter", VECTORS.items())
+def test_vectors_rfc5228_ctr(n, vector_and_counter):
+    vector = vector_and_counter[0]
 
     key, nonce, iv = map(
         binascii.unhexlify,
@@ -151,43 +154,5 @@ def test_rfc5228_ctr_{n}():
     plain_result = binascii.hexlify(
         cipher.decrypt(cipher_bytes)).decode().upper()    
 
-    try:
-        assert cipher_result == vector.cipher
-        assert plain_result == vector.plain
-    except AssertionError:
-        print("failed")
-        print("Key:")
-        print(vector.key)
-        print("Nonce+IV:")
-        print(vector.nonce+vector.iv)
-        print()
-        print("Plaintext (expected, result):")
-        print(vector.plain, plain_result)
-        print()
-        print("Ciphertext (expected, result):")
-        print(vector.cipher, cipher_result)
-
-        raise
-'''
-
-for vector in vectors_counter:
-    exec(CODE_TEST_COUNTER.format(
-        n=vector.n,
-        nonce=binascii.unhexlify(vector.nonce),
-        iv=binascii.unhexlify(vector.iv),
-        counter_block=vector.counter_block))
-
-for vector in vectors_cipher:
-    exec(CODE_TEST_CTR.format(
-        n=vector.n,
-        desc=vector.desc,
-        vector=repr(vector)))
-
-
-if __name__ == '__main__':
-    import __main__
-    for name in dir(__main__):
-        if name.startswith("test_") and callable(eval(name)):
-            print(name, end=': ')
-            eval(name)()
-            print("ok")
+    assert cipher_result == vector.cipher
+    assert plain_result == vector.plain
