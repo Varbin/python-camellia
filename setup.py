@@ -75,7 +75,8 @@ setup(
 
     platforms=['all'],
 
-    setup_requires=['cffi>=1.0.0'],
+    setup_requires=['cffi>=1.0.0', 'pytest-runner'],
+    tests_require=['pytest'],
     install_requires=['cffi>=1.0.0', 'pep272-encryption']
 
 )
