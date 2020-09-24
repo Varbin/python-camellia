@@ -78,7 +78,7 @@ setup(
     install_requires=['pep272-encryption'],
     extras_require={
         'docs': ['sphinx', 'sphinx_rtd_theme'],
-        'tests': ['pytest', 'pytest-runner'],
+        'tests': ['coverage', 'pytest', 'pytest-runner'],
     }
 
 )
