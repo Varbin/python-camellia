@@ -1,6 +1,12 @@
 API
 ===
 
+.. warning::
+   The documentations assumes you know the risks of using cryptography.
+   This library is low level with all benefits and dangers.
+
+   Here be dragons!
+
 
 The *new* constructor
 ---------------------
