@@ -6,27 +6,24 @@
 Welcome to python-camellia's documentation!
 ===========================================
 
-This is the documentation of python-camellia, 
+This is the documentation of python-camellia,
 a cryptographic library implementing the
 `Camellia <https://tools.ietf.org/html/rfc3713>`_ cipher in python.
 
-.. code:: python
+.. include:: ../README.rst
 
-   >>> import camellia
-   >>> plain = b"This is a text. "
-   >>> c1 = camellia.CamelliaCipher(key=b'16 byte long key', IV=b'16 byte iv. xxxx', mode=camellia.MODE_CBC)
-   >>> encrypted = c1.encrypt(plain)
-   >>> c2 = camellia.CamelliaCipher(key=b'16 byte long key', IV=b'16 byte iv. xxxx', mode=camellia.MODE_CBC)
-   >>> c2.decrypt(encrypted)
-   b'This is a text. '
-
+Tree of contents
+----------------
 
 .. toctree::
    :maxdepth: 2
 
-   install
-   api
-   license
+   1_install
+   2_api
+   3_examples
+   4_changelog
+   5_license
+
 
 
 
