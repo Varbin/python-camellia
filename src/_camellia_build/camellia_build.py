@@ -3,11 +3,13 @@
 """
 
 from distutils.ccompiler import new_compiler
+from distutils.errors import DistutilsArgError
 
 from cffi import FFI
 from setuptools import Distribution
 
 import os
+
 
 HERE = os.path.dirname(__file__)
 
@@ -27,7 +29,11 @@ with open(ABSOLUTE_SOURCE_FILE) as f:
 def extra_link_args():
     dist = Distribution()
     dist.parse_config_files()
-    dist.parse_command_line()
+    try:
+        dist.parse_command_line()
+    except (TypeError, DistutilsArgError):  # Happens with setup.py --help
+        pass
+
     build = dist.get_command_obj('build')
     build.ensure_finalized()
     if new_compiler(compiler=build.compiler).compiler_type == 'msvc':
