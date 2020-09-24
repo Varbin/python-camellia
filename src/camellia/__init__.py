@@ -4,16 +4,13 @@ r"""Camellia implementation for Python.
 Example:
 
     >>> import camellia
-    >>> cipher = camellia.new(b'\x80'+b'\x00*15, mode=camellia.MODE_ECB)
+    >>> cipher = camellia.new(b'\x80'+b'\x00'*15, mode=camellia.MODE_ECB)
     >>> cipher.encrypt(b'\x00'*16)
     b'l"\x7ft\x93\x19\xa3\xaa}\xa25\xa9\xbb\xa0Z,'
 
 """
 
-try:
-    from ._camellia import lib, ffi
-except (SystemError, ValueError):  # local tests
-    from _camellia import lib, ffi
+from ._camellia import lib, ffi
 
 import sys
 
@@ -120,7 +117,7 @@ def Camellia_Decrypt(keyLength, keytable, cipherText):
     return b(out)[:-1]
 
 
-def new(key, mode, **kwargs):
+def new(key, mode, IV=None, **kwargs):
     """Create an "CamelliaCipher" object.
 
     :param key: The key for encrytion/decryption. Must be 16/24/32 in length.
@@ -140,7 +137,7 @@ def new(key, mode, **kwargs):
     :returns: CamelliaCipher
     :raises: ValueError, NotImplementedError
     """
-    return CamelliaCipher(key, mode, **kwargs)
+    return CamelliaCipher(key, mode, IV=IV, **kwargs)
 
 
 key_size = None
