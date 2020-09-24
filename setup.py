@@ -65,7 +65,6 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
-        'Topic :: Security',
         'Topic :: Security :: Cryptography',
     ],
     keywords=[
