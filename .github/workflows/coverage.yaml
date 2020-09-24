@@ -22,8 +22,8 @@ jobs:
       with:
         python-version: 3.x
     - run: |
-        python -m pip install --upgrade pip
-        pip install .
+        python -m pip install --upgrade pip coverage
+        pip install . .[tests]
     - run: |
         python -m coverage run -p --source=camellia setup.py test
     - uses: actions/setup-python@v2
@@ -31,7 +31,7 @@ jobs:
         python-version: pypy2
     - run: |
         python -m pip install --upgrade pip
-        pip install .
+        pip install . .[tests]
     - run: |
         python -m coverage run -p --source=camellia setup.py test
     - run: |
