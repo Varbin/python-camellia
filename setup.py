@@ -74,7 +74,11 @@ setup(
     platforms=['all'],
 
     setup_requires=['cffi>=1.0.0', 'pytest-runner'],
-    tests_require=['pytest'],
-    install_requires=['cffi>=1.0.0', 'pep272-encryption']
+    tests_require=['pytest', 'pytest-runner'],
+    install_requires=['cffi>=1.0.0', 'pep272-encryption'],
+    extras_require={
+        'docs': ['sphinx', 'sphinx_rtd_theme'],
+        'tests': ['pytest', 'pytest-runner'],
+    }
 
 )
