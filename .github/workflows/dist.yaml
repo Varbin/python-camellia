@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-10.15]
-        python-version: [2.7, 3.6]
+        python-version: [2.7, 3.6, pypy2, pypy3]
 
     steps:
     - uses: actions/checkout@v2
@@ -35,7 +35,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [2.7, 3.6]
+        python-version: [pypy3, 3.6]
 
     steps:
       - uses: actions/checkout@v2
@@ -114,7 +114,7 @@ jobs:
           PRE=""
         fi
         docker pull quay.io/pypa/$P
-        docker run --rm -e PLAT=$P -v $(pwd):/io quay.io/pypa/$P $PRE sh -c "
+        docker run --rm -e PLAT=$P -v $(pwd):/io quay.io/pypa/$P $PRE sh -c '
           cd /io
           for py in cp27-cp27m cp27-cp27mu cp36-cp36m; do
             /opt/python/$py/bin/pip install . wheel
@@ -123,7 +123,7 @@ jobs:
 
           auditwheel repair dist/*.whl
           rm dist/*.whl
-        "
+        '
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
