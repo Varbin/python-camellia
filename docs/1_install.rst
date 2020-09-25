@@ -28,9 +28,5 @@ List of dependencies
 
 Dependencies are automatically installed during installation.
 
-*Runtime dependencies:*
  - `pep272-encryption <https://pypi.org/project/pep272-encryption>`_ providing block cipher modes
-
-*Installation dependencies (if not using prebuilt packages):*
- - `setuptools <https://pypi.org/project/setuptools>`_
  - `cffi`_
