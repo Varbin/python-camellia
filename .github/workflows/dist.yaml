@@ -124,10 +124,9 @@ jobs:
           if [ -d "/opt/python/${{ matrix.py }}" ]; then
             /opt/python/${{ matrix.py }}/bin/pip install . wheel
             /opt/python/${{ matrix.py }}/bin/python setup.py bdist_wheel --py-limited-api cp35
+            auditwheel repair dist/*.whl
+            rm dist/*.whl
           fi
-
-          auditwheel repair dist/*.whl
-          rm dist/*.whl
         '
     - name: Upload
       uses: actions/upload-artifact@v2
