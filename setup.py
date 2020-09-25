@@ -37,7 +37,7 @@ def long_description(short=description):
 
 setup(
     name='python-camellia',
-    version='1.0',
+    version='1.1.0.dev0',
     description=description,
     long_description=long_description(),
     author='Simon Biewald',
@@ -79,7 +79,7 @@ setup(
 
     setup_requires=['cffi>=1.0.0', 'pytest-runner'],
     tests_require=['pytest', 'pytest-runner'],
-    install_requires=['pep272-encryption'],
+    install_requires=['cffi>=1.0.0', 'pep272-encryption'],
     extras_require={
         'docs': ['sphinx', 'sphinx_rtd_theme'],
         'tests': ['coverage', 'pytest', 'pytest-runner'],
