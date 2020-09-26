@@ -42,14 +42,14 @@ setup(
     long_description=long_description(),
     author='Simon Biewald',
     author_email='simon@fam-biewald.de',
-    url='https://github.com/varbin/python-camellia',
+    url='https://github.com/Varbin/python-camellia',
     project_urls={
         'Documentation': 'https://python-camellia.readthedocs.io',
         'Source': 'https://github.com/Varbin/python-camellia',
         'Tracker': 'https://github.com/Varbin/python-camellia/issues'
     },
     packages=['camellia'],
-    package_dir={'camellia': 'src/camellia'},
+    package_dir={'': 'src'},
     package_data={
         "": ["py.typed", "*.pyi"],
     },
