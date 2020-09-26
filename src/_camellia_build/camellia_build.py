@@ -5,10 +5,10 @@
 from distutils.ccompiler import new_compiler
 from distutils.errors import DistutilsArgError
 
+import os
+
 from cffi import FFI
 from setuptools import Distribution
-
-import os
 
 
 HERE = os.path.dirname(__file__)
@@ -27,6 +27,12 @@ with open(ABSOLUTE_SOURCE_FILE) as f:
 
 
 def extra_link_args():
+    """
+    Add arguments for Data Execution Prevention and ASLR.
+    This is only relevant for older Python versions.
+
+    :return: `list` of arguments
+    """
     dist = Distribution()
     dist.parse_config_files()
     try:
@@ -38,8 +44,8 @@ def extra_link_args():
     build.ensure_finalized()
     if new_compiler(compiler=build.compiler).compiler_type == 'msvc':
         return ["/NXCOMPAT", "/DYNAMICBASE"]
-    else:
-        return []
+
+    return []
 
 
 ffi = FFI()
