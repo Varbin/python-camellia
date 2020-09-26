@@ -9,14 +9,16 @@ Example:
     b'l"\x7ft\x93\x19\xa3\xaa}\xa25\xa9\xbb\xa0Z,'
 
 """
-
-from ._camellia import lib, ffi
+import sys
 
 from binascii import unhexlify
 
-import sys
-
 from pep272_encryption import PEP272Cipher
+
+from ._camellia import lib, ffi  # pylint: disable=import-error
+
+# pylint: disable=invalid-name
+
 
 #: ECB mode of operation
 MODE_ECB = 1
@@ -31,10 +33,9 @@ MODE_CTR = 6
 
 
 if sys.version_info.major <= 2:
-
-    def b(b):
+    def b(_b):
         """Create bytes from a list of ints."""
-        return "".join(map(chr, b))
+        return "".join(map(chr, _b))
 
 
 else:
@@ -91,7 +92,7 @@ def Camellia_Ekeygen(rawKey):
 def Camellia_Encrypt(keyLength, keytable, plainText):
     r"""Encrypt a plaintext block by given arguments.
 
-    :param keyLength: key length (128, 192 or 256 bits)
+    :param keyLength: key length (128, 192 or 256 bits
     :type rawKey: int
 
     :param keytable: keytable returned by Camellia_Ekeygen
