@@ -105,6 +105,19 @@ jobs:
           - cp27-cp27m
           - cp27-cp27mu
           - cp36-cp36m
+        exclude:
+          - image: manylinux2014_s390x
+            py: cp27-cp27m
+          - image: manylinux2014_s390x
+            py: cp27-cp27mu
+          - image: manylinux2014_ppc64le
+            py: cp27-cp27m
+          - image: manylinux2014_ppc64le
+            py: cp27-cp27mu
+          - image: manylinux2014_aarch64
+            py: cp27-cp27m
+          - image: manylinux2014_aarch64
+            py: cp27-cp27mu
 
     steps:
     - uses: actions/checkout@v2
