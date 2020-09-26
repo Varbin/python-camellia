@@ -1,6 +1,4 @@
-import sys
-
-from typing import ByteString, List, Optional, Union
+from typing import ByteString, List, NoReturn, Optional, Union
 
 from pep272_encryption import PEP272Cipher
 
@@ -26,7 +24,7 @@ def Camellia_Decrypt(keyLength: int, keytable: List[int],
     ...
 
 
-def new(key: ByteString, mode: int, IV: Optional[ByteString], **kwargs) \
+def new(key: ByteString, mode: int, IV: Optional[ByteString]=None, **kwargs) \
         -> CamelliaCipher:
     ...
 
@@ -42,3 +40,7 @@ class CamelliaCipher(PEP272Cipher):
 
     def decrypt_block(self, key, block: ByteString, **kwargs) -> ByteString:
         ...
+
+
+def self_test() -> Union[None, NoReturn]:
+    ...

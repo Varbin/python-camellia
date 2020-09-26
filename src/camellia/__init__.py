@@ -12,6 +12,8 @@ Example:
 
 from ._camellia import lib, ffi
 
+from binascii import unhexlify
+
 import sys
 
 from pep272_encryption import PEP272Cipher
@@ -34,6 +36,16 @@ if sys.version_info.major <= 2:
         return "".join(map(chr, b))
 else:
     b = bytes
+
+
+_selftest_vectors = (
+    ('0123456789abcdeffedcba9876543210',
+     '0123456789abcdeffedcba9876543210', '67673138549669730857065648eabe43'),
+    ('0123456789abcdeffedcba98765432100011223344556677',
+     '0123456789abcdeffedcba9876543210', 'b4993401b3e996f84ee5cee7d79b09b9'),
+    ('0123456789abcdeffedcba987654321000112233445566778899aabbccddeeff',
+     '0123456789abcdeffedcba9876543210', '9acc237dff16d76c20ef7c919e3a7509')
+)
 
 
 def Camellia_Ekeygen(rawKey):
@@ -166,40 +178,17 @@ class CamelliaCipher(PEP272Cipher):
         return Camellia_Decrypt(self.key_length, key, block)
 
 
-def test(v=True):
-    """Small selftest of camellia with a single test vector."""
-    key = b"80000000000000000000000000000000"
-    plain = b"00000000000000000000000000000000"
-    cipher = b"6C227F749319A3AA7DA235A9BBA05A2C"
+def self_test():
+    """
+    Run self-test.
 
-    import binascii
-
-    c = CamelliaCipher(binascii.unhexlify(key), mode=MODE_ECB)
-
-    ec = c.encrypt(binascii.unhexlify(plain))
-
-    if not ec == binascii.unhexlify(cipher):
-        if v:
-            print("Result:\t\tcipher=%s" % binascii.hexlify(ec).decode())
-            print("Required:\tcipher=%s" % cipher.decode())
-            return "failed"
-        else:
-            raise Exception("Camellia does not work as expected!")
-
-    dc = c.decrypt(ec)
-
-    if not dc == binascii.unhexlify(plain):
-        if v:
-            print("Result:\t\tcipher=%s" % binascii.hexlify(dc).decode())
-            print("Required:\tcipher=%s" % plain.decode())
-            return "failed"
-        else:
-            raise Exception("Camellia does not work as expected!")
-
-    return "passed"
+    :raises RuntimeError:
+    """
+    for key, plain_hex, cipher_hex in  _selftest_vectors:
+        cam = new(unhexlify(key), MODE_ECB)
+        plain, cipher = unhexlify(plain_hex), unhexlify(cipher_hex)
+        if cam.encrypt(plain) != cipher or cam.decrypt(cipher) != plain:
+            raise RuntimeError("Self-test of camellia failed")
 
 
-assert test(False) == "passed"
-
-if __name__ == "__main__":
-    print("Test: "+test())
+self_test()
