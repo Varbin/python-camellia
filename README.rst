@@ -14,9 +14,11 @@
    :target: https://python-camellia.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
-`Documentation`_
+`Documentation`_ | `Source`_ | `Issue tracker`_
 
 .. _Documentation: https://python-camellia.readthedocs.io
+.. _Source: https://github.com/Varbin/python-camellia
+.. _Issue tracker: https://github.com/Varbin/python-camellia/issues
 
 .. code:: python
 
@@ -34,9 +36,9 @@ access to extreme low-level functions like *Camellia-Ekeygen* but also provides 
 cryptographic interface. This semi low-level interface supports encryption (and decryption) in ECB, 
 CBC, CFB, OFB and CTR modes of operation.
 
-See the `installation instructions`_ for more details in installation.
+See the `installation instructions`_ for details regarding installation.
 
-.. _`installation instructions`:
+.. _`installation instructions`: https://python-camellia.readthedocs.io/en/latest/1_install.html
 
 This software contains encryption algorithms, thus it may be restricted by law in some countries.
 
