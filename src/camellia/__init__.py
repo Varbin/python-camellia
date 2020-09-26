@@ -31,20 +31,32 @@ MODE_CTR = 6
 
 
 if sys.version_info.major <= 2:
+
     def b(b):
         """Create bytes from a list of ints."""
         return "".join(map(chr, b))
+
+
 else:
     b = bytes
 
 
 _selftest_vectors = (
-    ('0123456789abcdeffedcba9876543210',
-     '0123456789abcdeffedcba9876543210', '67673138549669730857065648eabe43'),
-    ('0123456789abcdeffedcba98765432100011223344556677',
-     '0123456789abcdeffedcba9876543210', 'b4993401b3e996f84ee5cee7d79b09b9'),
-    ('0123456789abcdeffedcba987654321000112233445566778899aabbccddeeff',
-     '0123456789abcdeffedcba9876543210', '9acc237dff16d76c20ef7c919e3a7509')
+    (
+        "0123456789abcdeffedcba9876543210",
+        "0123456789abcdeffedcba9876543210",
+        "67673138549669730857065648eabe43",
+    ),
+    (
+        "0123456789abcdeffedcba98765432100011223344556677",
+        "0123456789abcdeffedcba9876543210",
+        "b4993401b3e996f84ee5cee7d79b09b9",
+    ),
+    (
+        "0123456789abcdeffedcba987654321000112233445566778899aabbccddeeff",
+        "0123456789abcdeffedcba9876543210",
+        "9acc237dff16d76c20ef7c919e3a7509",
+    ),
 )
 
 
@@ -57,11 +69,12 @@ def Camellia_Ekeygen(rawKey):
 
     :returns: keytable
     """
-    keyLength = len(rawKey)*8
+    keyLength = len(rawKey) * 8
 
     if keyLength not in [128, 192, 256]:
-        raise ValueError("Invalid key length, "
-                         "it must be 128, 192 or 256 bits long!")
+        raise ValueError(
+            "Invalid key length, " "it must be 128, 192 or 256 bits long!"
+        )
 
     raw_key = ffi.new("const unsigned char []", rawKey)
     keytable = ffi.new("KEY_TABLE_TYPE")
@@ -86,14 +99,15 @@ def Camellia_Encrypt(keyLength, keytable, plainText):
     :returns: ciphertext block
     """
     if keyLength not in [128, 192, 256]:
-        raise ValueError("Invalid key length, "
-                         "it must be 128, 192 or 256 bits long!")
+        raise ValueError(
+            "Invalid key length, " "it must be 128, 192 or 256 bits long!"
+        )
 
     if len(plainText) != 16:
         raise ValueError("Plain text length must be 16!")
 
     inp = ffi.new("const unsigned char []", plainText)
-    out = ffi.new("unsigned char []", b"\00"*16)
+    out = ffi.new("unsigned char []", b"\00" * 16)
 
     lib.Camellia_EncryptBlock(keyLength, inp, keytable, out)
 
@@ -115,14 +129,15 @@ def Camellia_Decrypt(keyLength, keytable, cipherText):
     :returns: plaintext block
     """
     if keyLength not in [128, 192, 256]:
-        raise ValueError("Invalid key length, "
-                         "it must be 128, 192 or 256 bits long!")
+        raise ValueError(
+            "Invalid key length, " "it must be 128, 192 or 256 bits long!"
+        )
 
     if len(cipherText) != 16:
         raise ValueError("Cipher text length must be 16!")
 
     inp = ffi.new("const unsigned char []", cipherText)
-    out = ffi.new("unsigned char []", b"\00"*16)
+    out = ffi.new("unsigned char []", b"\00" * 16)
 
     lib.Camellia_DecryptBlock(keyLength, inp, keytable, out)
 
@@ -165,7 +180,7 @@ class CamelliaCipher(PEP272Cipher):
     def __init__(self, key, mode, **kwargs):
         """Constructer of Cipher class. See :func:`camellia.new`."""
         keytable = Camellia_Ekeygen(key)
-        self.key_length = len(key)*8
+        self.key_length = len(key) * 8
 
         PEP272Cipher.__init__(self, keytable, mode, **kwargs)
 
@@ -184,7 +199,7 @@ def self_test():
 
     :raises RuntimeError:
     """
-    for key, plain_hex, cipher_hex in  _selftest_vectors:
+    for key, plain_hex, cipher_hex in _selftest_vectors:
         cam = new(unhexlify(key), MODE_ECB)
         plain, cipher = unhexlify(plain_hex), unhexlify(cipher_hex)
         if cam.encrypt(plain) != cipher or cam.decrypt(cipher) != plain:
