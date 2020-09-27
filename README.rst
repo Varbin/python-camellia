@@ -1,3 +1,5 @@
+`Documentation`_ | `Source`_ | `Issue tracker`_
+
 .. image:: https://github.com/varbin/python-camellia/workflows/QA/badge.svg
    :target: https://github.com/varbin/python-camellia/actions
    :alt: Github Actions: QA
@@ -13,8 +15,6 @@
 .. image:: https://readthedocs.org/projects/python-camellia/badge/?version=latest
    :target: https://python-camellia.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
-
-`Documentation`_ | `Source`_ | `Issue tracker`_
 
 .. _Documentation: https://python-camellia.readthedocs.io
 .. _Source: https://github.com/Varbin/python-camellia
