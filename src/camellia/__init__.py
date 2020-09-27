@@ -242,11 +242,10 @@ class CamelliaCipher(PEP272Cipher):
                 cipher_text,
                 len(string) // 16
             )
-            return bytes(cipher_text)
+            return cipher_text
 
         if self.mode == MODE_CBC:
             cipher_text = b"\x00"*len(string)
-
             lib.Camellia_EncryptCbc(
                 self.key_length,
                 string,
@@ -304,6 +303,7 @@ class CamelliaCipher(PEP272Cipher):
 
         if self.mode == MODE_ECB:
             plain_text = b"\x00"*len(string)
+
             lib.Camellia_DecryptEcb(
                 self.key_length,
                 string,
@@ -314,7 +314,6 @@ class CamelliaCipher(PEP272Cipher):
             return plain_text
 
         if self.mode == MODE_CBC:
-            print(self._status)
             plain_text = b"\x00"*len(string)
 
             lib.Camellia_DecryptCbc(
