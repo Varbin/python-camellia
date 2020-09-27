@@ -81,10 +81,9 @@ def Camellia_Ekeygen(rawKey):
 
     _check_keylength(key_length)
 
-    raw_key = ffi.new("const unsigned char []", rawKey)
     keytable = ffi.new("KEY_TABLE_TYPE")
 
-    lib.Camellia_Ekeygen(key_length, raw_key, keytable)
+    lib.Camellia_Ekeygen(key_length, rawKey, keytable)
 
     return list(keytable)
 
@@ -108,12 +107,11 @@ def Camellia_Encrypt(keyLength, keytable, plainText):
     if len(plainText) != 16:
         raise ValueError("Plain text length must be 16!")
 
-    inp = ffi.new("const unsigned char []", plainText)
-    out = ffi.new("unsigned char []", b"\00" * 16)
+    out = b"\x00" * 16
 
-    lib.Camellia_EncryptBlock(keyLength, inp, keytable, out)
+    lib.Camellia_EncryptBlock(keyLength, plainText, keytable, out)
 
-    return b(out)[:-1]
+    return out
 
 
 def Camellia_Decrypt(keyLength, keytable, cipherText):
@@ -135,12 +133,11 @@ def Camellia_Decrypt(keyLength, keytable, cipherText):
     if len(cipherText) != 16:
         raise ValueError("Cipher text length must be 16!")
 
-    inp = ffi.new("const unsigned char []", cipherText)
-    out = ffi.new("unsigned char []", b"\00" * 16)
+    out = b"\x00 " *block_size
 
-    lib.Camellia_DecryptBlock(keyLength, inp, keytable, out)
+    lib.Camellia_DecryptBlock(keyLength, cipherText, keytable, out)
 
-    return b(out)[:-1]
+    return out
 
 
 def new(key, mode, IV=None, **kwargs):
