@@ -38,9 +38,7 @@ _TestvectorOpenSSL = collections.namedtuple(
 
 
 def _get_vectors_openssl(
-        filename=VECTOR_FILENAME,
-        algo="camellia",
-        mode="ECB"):
+        filename=VECTOR_FILENAME):
 
     parsed_vectors = {}
     lineno = 0
@@ -60,9 +58,9 @@ def _get_vectors_openssl(
                  plain, cipher, encdec) = line.split(":")
                 encdec = int(encdec)
 
-            if not (algo.upper() in desc and
-                    mode.upper() in desc):
-                continue
+            algo, bits, mode = desc.split('-')
+            assert algo.upper() == "CAMELLIA"
+            assert bits in ("128", "192", "256")
 
             parsed_vectors[lineno] = _TestvectorOpenSSL(
                 mode,
