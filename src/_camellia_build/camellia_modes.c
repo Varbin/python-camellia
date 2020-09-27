@@ -84,11 +84,10 @@ void Camellia_DecryptCbc(
         );
 
         for (int j=0; j < CAMELLIA_BLOCK_SIZE; j++) {
-            plaintext[j] ^= iv[j];
+            *(plaintext++) ^= iv[j];
         }
 
         memcpy(iv, ciphertext, CAMELLIA_BLOCK_SIZE);
         ciphertext += CAMELLIA_BLOCK_SIZE;
-        plaintext += CAMELLIA_BLOCK_SIZE;
     }
 }
