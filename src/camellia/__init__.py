@@ -182,7 +182,155 @@ class CamelliaCipher(PEP272Cipher):
         self.key_length = len(key) * 8
         _check_keylength(self.key_length)
 
+        iv = kwargs.get('IV', kwargs.get('iv'))
+        if iv is not None:
+            # Force copy, IV may be interned or used elsewhere
+            self._status_buffer = \
+                ffi.new("unsigned char [CAMELLIA_BLOCK_SIZE]",
+                        iv)
+
         PEP272Cipher.__init__(self, keytable, mode, **kwargs)
+
+    def encrypt(self, string):
+        """Encrypt data with the key and the parameters set at initialization.
+
+        The cipher object is stateful; encryption of a long block
+        of data can be broken up in two or more calls to `encrypt()`.
+        That is, the statement:
+
+            >>> c.encrypt(a) + c.encrypt(b)
+
+        is always equivalent to:
+
+             >>> c.encrypt(a+b)
+
+        That also means that you cannot reuse an object for encrypting
+        or decrypting other data with the same key.
+
+        This function does not perform any padding.
+
+         - For `MODE_ECB`, `MODE_CBC` *string* length
+           (in bytes) must be a multiple of *block_size*.
+
+         - For `MODE_CFB`, *string* length (in bytes) must be a multiple
+           of *segment_size*/8.
+
+         - For `MODE_CTR` and `MODE_OFB`, *string* can be of any length.
+
+        :param bytes string: The piece of data to encrypt.
+        :raises ValueError:
+            When a mode of operation has be requested this code cannot handle.
+        :raises ValueError:
+            When len(string) has a wrong length, as described above.
+        :raises TypeError:
+            When the counter callable in CTR returns data with the wrong
+            length.
+
+        :return:
+            The encrypted data, as a byte string. It is as long as
+            *string*.
+        :rtype: bytes
+        """
+
+        if self.mode == MODE_ECB or self.mode == MODE_CBC:
+            if len(string) % self.block_size:
+                raise ValueError("Input must be a multiple of 16 in length")
+
+        if self.mode == MODE_ECB:
+            cipher_text = b"\x00"*len(string)
+            lib.Camellia_EncryptEcb(
+                self.key_length,
+                string,
+                self.key,
+                cipher_text,
+                len(string) // 16
+            )
+            return bytes(cipher_text)
+
+        if self.mode == MODE_CBC:
+            cipher_text = b"\x00"*len(string)
+
+            lib.Camellia_EncryptCbc(
+                self.key_length,
+                string,
+                self.key,
+                cipher_text,
+                len(string) // 16,
+                self._status_buffer
+            )
+            return cipher_text
+
+        return super(CamelliaCipher, self).encrypt(string)
+
+    def decrypt(self, string):
+        """Decrypt data with the key and the parameters set at initialization.
+
+        The cipher object is stateful; decryption of a long block
+        of data can be broken up in two or more calls to `decrypt()`.
+        That is, the statement:
+
+            >>> c.decrypt(a) + c.decrypt(b)
+
+        is always equivalent to:
+
+             >>> c.decrypt(a+b)
+
+        That also means that you cannot reuse an object for encrypting
+        or decrypting other data with the same key.
+
+        This function does not perform any padding.
+
+         - For `MODE_ECB`, `MODE_CBC` *string* length
+           (in bytes) must be a multiple of *block_size*.
+
+         - For `MODE_CFB`, *string* length (in bytes) must be a multiple
+           of *segment_size*/8.
+
+         - For `MODE_CTR` and `MODE_OFB`, *string* can be of any length.
+
+        :param bytes string: The piece of data to decrypt.
+        :raises ValueError:
+            When a mode of operation has be requested this code cannot handle.
+        :raises ValueError:
+            When len(string) has a wrong length, as described above.
+        :raises TypeError:
+            When the counter in CTR returns data of the wrong length.
+
+        :return:
+            The decrypted data, as a byte string. It is as long as
+            *string*.
+        :rtype: bytes
+        """
+        if self.mode == MODE_ECB or self.mode == MODE_CBC:
+            if len(string) % self.block_size:
+                raise ValueError("Input must be a multiple of 16 in length")
+
+        if self.mode == MODE_ECB:
+            plain_text = b"\x00"*len(string)
+            lib.Camellia_DecryptEcb(
+                self.key_length,
+                string,
+                self.key,
+                plain_text,
+                len(string) // 16
+            )
+            return plain_text
+
+        if self.mode == MODE_CBC:
+            print(self._status)
+            plain_text = b"\x00"*len(string)
+
+            lib.Camellia_DecryptCbc(
+                self.key_length,
+                string,
+                self.key,
+                plain_text,
+                len(string) // 16,
+                self._status_buffer
+            )
+            return plain_text
+
+        return super(CamelliaCipher, self).encrypt(string)
 
     def encrypt_block(self, key, block, **kwargs):
         """Encrypt a single block with camellia."""

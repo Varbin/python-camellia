@@ -13,17 +13,19 @@ from setuptools import Distribution
 
 HERE = os.path.dirname(__file__)
 
-SOURCE_FILE = "camellia.c"
-HEADER_FILE = "camellia.h"
+SOURCE_FILES = ["camellia.c", "camellia_modes.c"]
+HEADER_FILES = ["camellia.h", "camellia_modes.h"]
 
-ABSOLUTE_SOURCE_FILE = os.path.join(HERE, SOURCE_FILE)
-ABSOLUTE_HEADER_FILE = os.path.join(HERE, HEADER_FILE)
 
-with open(ABSOLUTE_HEADER_FILE) as f:
-    header = f.read()
+header = ""
+for header_file in HEADER_FILES:
+    with open(os.path.join(HERE, header_file)) as f:
+        header += "\n\n" + f.read()
 
-with open(ABSOLUTE_SOURCE_FILE) as f:
-    source = f.read()
+
+sources = []
+for source_file in SOURCE_FILES:
+    sources.append(os.path.join(HERE, source_file))
 
 
 def extra_link_args():
@@ -50,5 +52,5 @@ def extra_link_args():
 
 ffi = FFI()
 ffi.cdef(header)
-ffi.set_source("camellia._camellia", source,
+ffi.set_source("camellia._camellia", header, sources=sources,
                include_dirs=[HERE], extra_link_args=extra_link_args())
