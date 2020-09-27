@@ -303,7 +303,6 @@ class CamelliaCipher(PEP272Cipher):
 
         if self.mode == MODE_ECB:
             plain_text = b"\x00"*len(string)
-
             lib.Camellia_DecryptEcb(
                 self.key_length,
                 string,
@@ -315,7 +314,6 @@ class CamelliaCipher(PEP272Cipher):
 
         if self.mode == MODE_CBC:
             plain_text = b"\x00"*len(string)
-
             lib.Camellia_DecryptCbc(
                 self.key_length,
                 string,
