@@ -68,6 +68,11 @@ def _check_keylength(length):
         )
 
 
+def _check_blocksize(string):
+    if len(string) % block_size:
+        raise ValueError("Input must be a multiple of 16 in length")
+
+
 def Camellia_Ekeygen(rawKey):
     """
     Make a keytable from a key.
@@ -177,7 +182,6 @@ class CamelliaCipher(PEP272Cipher):
         """Constructer of Cipher class. See :func:`camellia.new`."""
         keytable = Camellia_Ekeygen(key)
         self.key_length = len(key) * 8
-        _check_keylength(self.key_length)
 
         iv = kwargs.get('IV', kwargs.get('iv'))
         if iv is not None:
@@ -230,31 +234,13 @@ class CamelliaCipher(PEP272Cipher):
         """
 
         if self.mode == MODE_ECB or self.mode == MODE_CBC:
-            if len(string) % self.block_size:
-                raise ValueError("Input must be a multiple of 16 in length")
+            _check_blocksize(string)
 
         if self.mode == MODE_ECB:
-            cipher_text = b"\x00"*len(string)
-            lib.Camellia_EncryptEcb(
-                self.key_length,
-                string,
-                self.key,
-                cipher_text,
-                len(string) // 16
-            )
-            return cipher_text
+            return self._encrypt_ecb_fast(string)
 
         if self.mode == MODE_CBC:
-            cipher_text = b"\x00"*len(string)
-            lib.Camellia_EncryptCbc(
-                self.key_length,
-                string,
-                self.key,
-                cipher_text,
-                len(string) // 16,
-                self._status_buffer
-            )
-            return cipher_text
+            return self._encrypt_cbc_fast(string)
 
         return super(CamelliaCipher, self).encrypt(string)
 
@@ -298,31 +284,13 @@ class CamelliaCipher(PEP272Cipher):
         :rtype: bytes
         """
         if self.mode == MODE_ECB or self.mode == MODE_CBC:
-            if len(string) % self.block_size:
-                raise ValueError("Input must be a multiple of 16 in length")
+            _check_blocksize(string)
 
         if self.mode == MODE_ECB:
-            plain_text = b"\x00"*len(string)
-            lib.Camellia_DecryptEcb(
-                self.key_length,
-                string,
-                self.key,
-                plain_text,
-                len(string) // 16
-            )
-            return plain_text
+            return self._decrypt_ecb_fast(string)
 
         if self.mode == MODE_CBC:
-            plain_text = b"\x00"*len(string)
-            lib.Camellia_DecryptCbc(
-                self.key_length,
-                string,
-                self.key,
-                plain_text,
-                len(string) // 16,
-                self._status_buffer
-            )
-            return plain_text
+            return self._decrypt_cbc_fast(string)
 
         return super(CamelliaCipher, self).encrypt(string)
 
@@ -333,6 +301,52 @@ class CamelliaCipher(PEP272Cipher):
     def decrypt_block(self, key, block, **kwargs):
         """Decrypt a single block with camellia."""
         return Camellia_Decrypt(self.key_length, key, block)
+
+    def _encrypt_ecb_fast(self, string):
+        cipher_text = b"\x00" * len(string)
+        lib.Camellia_EncryptEcb(
+            self.key_length,
+            string,
+            self.key,
+            cipher_text,
+            len(string) // 16
+        )
+        return cipher_text
+
+    def _decrypt_ecb_fast(self, string):
+        plain_text = b"\x00" * len(string)
+        lib.Camellia_DecryptEcb(
+            self.key_length,
+            string,
+            self.key,
+            plain_text,
+            len(string) // 16
+        )
+        return plain_text
+
+    def _encrypt_cbc_fast(self, string):
+        cipher_text = b"\x00" * len(string)
+        lib.Camellia_EncryptCbc(
+            self.key_length,
+            string,
+            self.key,
+            cipher_text,
+            len(string) // 16,
+            self._status_buffer
+        )
+        return cipher_text
+
+    def _decrypt_cbc_fast(self, string):
+        plain_text = b"\x00" * len(string)
+        lib.Camellia_DecryptCbc(
+            self.key_length,
+            string,
+            self.key,
+            plain_text,
+            len(string) // 16,
+            self._status_buffer
+        )
+        return plain_text
 
 
 def self_test():

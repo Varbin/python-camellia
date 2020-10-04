@@ -1,4 +1,4 @@
-from typing import ByteString, List, NoReturn, Optional, Union
+from typing import Any, ByteString, List, NoReturn, Optional, Union
 
 from pep272_encryption import PEP272Cipher
 
@@ -31,6 +31,7 @@ def new(key: ByteString, mode: int, IV: Optional[ByteString]=None, **kwargs) \
 
 class CamelliaCipher(PEP272Cipher):
     key_length: int
+    _status_buffer: Any
 
     def __init__(self, key: ByteString, mode: int, **kwargs):
         PEP272Cipher.__init__(self, ..., mode, **kwargs)
@@ -39,6 +40,18 @@ class CamelliaCipher(PEP272Cipher):
         ...
 
     def decrypt_block(self, key, block: ByteString, **kwargs) -> ByteString:
+        ...
+
+    def _encrypt_ecb_fast(self, string) -> bytes:
+        ...
+
+    def _decrypt_ecb_fast(self, string) -> bytes:
+        ...
+
+    def _encrypt_cbc_fast(self, string) -> bytes:
+        ...
+
+    def _decrypt_cbc_fast(self, string) -> bytes:
         ...
 
 
